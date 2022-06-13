@@ -5,9 +5,13 @@ import discord4j.core.`object`.entity.User
 import discord4j.core.spec.EmbedCreateSpec
 import discord4j.discordjson.json.EmbedData
 import discord4j.rest.util.Color
-import eu.pb4.placeholders.PlaceholderAPI
-import eu.pb4.placeholders.TextParser
-import net.minecraft.network.MessageType
+import eu.pb4.placeholders.api.PlaceholderContext
+import eu.pb4.placeholders.api.Placeholders
+import eu.pb4.placeholders.api.Placeholders.parseText
+import eu.pb4.placeholders.api.TextParserUtils
+import eu.pb4.placeholders.api.parsers.TextParserV1
+import net.minecraft.network.message.MessageSender
+import net.minecraft.network.message.MessageType
 import net.minecraft.server.MinecraftServer
 import net.minecraft.server.PlayerManager
 import net.minecraft.server.network.ServerPlayerEntity
@@ -19,10 +23,7 @@ import java.util.*
 
 
 object MessageUtils {
-    private var ALLOWED_TAGS_NAMES = arrayOf("obf", "bold", "underline", "strikethrough", "italic")
-    var ALLOWED_TAGS = TextParser.getRegisteredSafeTags().filter { item ->
-        ALLOWED_TAGS_NAMES.contains(item.key)
-    }
+    var ALLOWED_TAGS = arrayOf("obf", "bold", "underline", "strikethrough", "italic")
     
     fun sendEmbedMessage(channel: Snowflake?, embed: EmbedData) {
         if (channel == null) return
@@ -32,9 +33,9 @@ object MessageUtils {
     fun sendMinecraftMessage(playerManager: PlayerManager, user: User, message: Text) {
         val formattedMessage = format(
             ConfigInstance.messages.format.replace("%discord_user%", user.username).replace("%discord_tag%", user.discriminator), playerManager.server
-        ).shallowCopy().append(message)
+        ).copy().append(message)
     
-        playerManager.broadcast(formattedMessage, MessageType.CHAT, UUID.nameUUIDFromBytes(user.id.asBigInteger().toByteArray()))
+        playerManager.broadcast(formattedMessage, MessageType.CHAT)
     }
     
     // TODO: Rework this function for a better performance.
@@ -56,21 +57,21 @@ object MessageUtils {
     
     fun format(message: String, server: MinecraftServer? = null, player: ServerPlayerEntity? = null, customReplacements: HashMap<String, String>? = null): Text {
         val finalMessage = replacer(message, customReplacements)
-        if (player != null) return PlaceholderAPI.parseText(TextParser.parse(finalMessage), player)
-        if (server != null) return PlaceholderAPI.parseText(TextParser.parse(finalMessage), server)
-        return TextParser.parse(finalMessage)
+        if (player != null) return parseText(TextParserUtils.formatText(finalMessage), PlaceholderContext.of(player))
+        if (server != null) return parseText(TextParserUtils.formatText(finalMessage), PlaceholderContext.of(server))
+        return TextParserUtils.formatText(finalMessage)
     }
     
     fun format(message: String, server: MinecraftServer?, customReplacements: HashMap<String, String>? = null): Text {
         val finalMessage = replacer(message, customReplacements)
-        if (server != null) return PlaceholderAPI.parseText(TextParser.parse(finalMessage), server)
-        return TextParser.parse(finalMessage)
+        if (server != null) return parseText(TextParserUtils.formatText(finalMessage), PlaceholderContext.of(server))
+        return TextParserUtils.formatText(finalMessage)
     }
     
     fun format(message: String, player: ServerPlayerEntity?, customReplacements: HashMap<String, String>? = null): Text {
         val finalMessage = replacer(message, customReplacements)
-        if (player != null) return PlaceholderAPI.parseText(TextParser.parse(finalMessage), player)
-        return TextParser.parse(finalMessage)
+        if (player != null) return parseText(TextParserUtils.formatText(finalMessage), PlaceholderContext.of(player))
+        return TextParserUtils.formatText(finalMessage)
     }
     
     fun replacer(message: String, replacements: HashMap<String, String>? = null): String {

@@ -2,6 +2,8 @@ package space.ryzhenkov.Fabric2Discord.mixins;
 
 import discord4j.discordjson.json.WebhookExecuteRequest;
 import discord4j.rest.util.MultipartRequest;
+import net.minecraft.network.packet.c2s.play.ChatMessageC2SPacket;
+import net.minecraft.server.filter.FilteredMessage;
 import net.minecraft.server.filter.TextStream;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
@@ -24,10 +26,10 @@ public abstract class ServerPlayNetworkHandlerMixin {
     @Shadow
     public abstract ServerPlayerEntity getPlayer();
 
-    @Inject(method = "handleMessage", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/PlayerManager;broadcast(Lnet/minecraft/text/Text;Ljava/util/function/Function;Lnet/minecraft/network/MessageType;Ljava/util/UUID;)V"))
-    private void onPlayerMessageEvent(TextStream.Message message, CallbackInfo ci) {
+    @Inject(method = "handleMessage", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/message/MessageDecorator;decorateChat(Lnet/minecraft/server/network/ServerPlayerEntity;Lnet/minecraft/server/filter/FilteredMessage;Lnet/minecraft/network/message/MessageSignature;Z)Ljava/util/concurrent/CompletableFuture;"))
+    private void onPlayerMessageEvent(ChatMessageC2SPacket packet, FilteredMessage<String> message, CallbackInfo ci) {
         HashMap<String, String> replacements = new HashMap<>();
-        replacements.put("message", message.getFiltered());
+        replacements.put("message", message.filtered());
 
         if (ConfigInstance.general.ids.INSTANCE.getWebhookId() != null) {
             ClientInstance.INSTANCE.getClient().getWebhookService().getWebhook(ConfigInstance.general.ids.INSTANCE.getWebhookId().asLong()).subscribe(webhook -> {

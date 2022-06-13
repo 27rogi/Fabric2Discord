@@ -1,6 +1,7 @@
 package space.ryzhenkov.Fabric2Discord
 
 import discord4j.common.util.Snowflake
+import discord4j.core.`object`.presence.Status
 import me.lortseam.completeconfig.api.ConfigContainer
 import me.lortseam.completeconfig.api.ConfigContainer.Transitive
 import me.lortseam.completeconfig.api.ConfigEntries
@@ -36,12 +37,11 @@ object ConfigInstance:ConfigContainer {
             @ConfigEntry(comment = "Enables or disables this feature")
             var enabled: Boolean = true
     
-            @ConfigEntry(comment = "Status type, variants: IDLE, ONLINE")
-            var type: String = "IDLE"
+            @ConfigEntry(comment = "Status type, variants: ONLINE, IDLE, DO_NOT_DISTURB, INVISIBLE, OFFLINE")
+            var type: String = "DO_NOT_DISTURB"
     
             @ConfigEntry(comment = "Status update interval in minutes (min = 1, max = 120)")
             @ConfigEntry.BoundedInteger(min = 1, max = 120)
-            @ConfigEntry.Slider
             var interval: Int = 1
     
             @ConfigEntry(
@@ -110,7 +110,7 @@ object ConfigInstance:ConfigContainer {
         var formattedAttachment = "<blue><url:'%attachment_url%'>[%attachment_name%]</url></blue>"
         
         @Transitive
-        @ConfigEntries
+        @ConfigEntries(includeAll = true)
         object serverStart:ConfigGroup, IConfigEmbedMessage {
             @Override
             override fun getComment(): String {
@@ -132,7 +132,7 @@ object ConfigInstance:ConfigContainer {
         }
         
         @Transitive
-        @ConfigEntries
+        @ConfigEntries(includeAll = true)
         object serverStop:ConfigGroup, IConfigEmbedMessage {
             @Override
             override fun getComment(): String {
@@ -154,7 +154,7 @@ object ConfigInstance:ConfigContainer {
         }
         
         @Transitive
-        @ConfigEntries
+        @ConfigEntries(includeAll = true)
         object playerJoin:ConfigGroup, IConfigEmbedMessage {
             @Override
             override fun getComment(): String {
@@ -176,7 +176,7 @@ object ConfigInstance:ConfigContainer {
         }
         
         @Transitive
-        @ConfigEntries
+        @ConfigEntries(includeAll = true)
         object playerLeave:ConfigGroup, IConfigEmbedMessage {
             @Override
             override fun getComment(): String {
@@ -199,7 +199,7 @@ object ConfigInstance:ConfigContainer {
         }
         
         @Transitive
-        @ConfigEntries
+        @ConfigEntries(includeAll = true)
         object playerAdvancement:ConfigGroup, IConfigEmbedMessage {
             @Override
             override fun getComment(): String {
@@ -222,7 +222,7 @@ object ConfigInstance:ConfigContainer {
         }
         
         @Transitive
-        @ConfigEntries
+        @ConfigEntries(includeAll = true)
         object playerDeath:ConfigGroup, IConfigEmbedMessage {
             @Override
             override fun getComment(): String {
@@ -245,7 +245,7 @@ object ConfigInstance:ConfigContainer {
         }
         
         @Transitive
-        @ConfigEntries
+        @ConfigEntries(includeAll = true)
         object playerDimension:ConfigGroup, IConfigEmbedMessage {
             @Override
             override fun getComment(): String {
@@ -268,7 +268,7 @@ object ConfigInstance:ConfigContainer {
         }
         
         @Transitive
-        @ConfigEntries
+        @ConfigEntries(includeAll = true)
         object chatMessage:ConfigGroup, IConfigEmbedMessage {
             @Override
             override fun getComment(): String {
