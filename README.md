@@ -1,5 +1,5 @@
 <div align="center">
-<img src="https://raw.githubusercontent.com/rogi27/Fabric2Discord/main/src/main/resources/assets/f2d/banner.png" height="128" />
+<img src="https://raw.githubusercontent.com/rogi27/Fabric2Discord/1.19/.github/banner.png" height="312" />
 
 # Fabric2Discord
 ### Link your Fabric server and Discord with ease!
