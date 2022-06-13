@@ -17,14 +17,14 @@ object ConfigInstance:ConfigContainer {
             return """
             Thanks for using Fabric2Discord!
             The configuration might look very complicated, so I made a simple WIKI to help you:
-            https://github.com/rogi27/Fabric2Discord/wiki
+            https://github.com/rogi27/Fabric2Discord/wiki/Introduction
             
             Since this plugin has a close bound with Placeholder API you might want to check it's WIKI:
             https://placeholders.pb4.eu/
             """.trimIndent()
         }
         
-        @ConfigEntry(comment = "Your token should be here, check https://github.com/rogi27/Fabric2Discord/wiki/token")
+        @ConfigEntry(comment = "Your token should be here, check https://github.com/rogi27/Fabric2Discord/wiki/Getting-Started#connecting-webhook=")
         var token = ""
         
         @Transitive
@@ -58,17 +58,17 @@ object ConfigInstance:ConfigContainer {
             }
             
             @ConfigEntry(
-                comment = "Snowflake (id) of the channel used for join, leave, death and etc. messages\n" + "More on https://wiki.ru/"
+                comment = "Snowflake (id) of the channel used for join, leave, death and etc. messages\n" + "More on https://github.com/rogi27/Fabric2Discord/wiki/Getting-Started#basic-setup="
             )
             private var logChannel: Long = 0
             
             @ConfigEntry(
-                comment = "Snowflake (id) of the channel used to link Discord and Minecraft messages\n" + "More on https://wiki.ru/"
+                comment = "Snowflake (id) of the channel used to link Discord and Minecraft messages\n" + "More on https://github.com/rogi27/Fabric2Discord/wiki/Getting-Started#basic-setup="
             )
             private var chatChannel: Long = 0
             
             @ConfigEntry(
-                comment = "Snowflake (id) of the webhook used to send Minecraft messages using player data\n" + "More on https://wiki.ru/"
+                comment = "Snowflake (id) of the webhook used to send Minecraft messages using player data\n" + "More on https://github.com/rogi27/Fabric2Discord/wiki/Getting-Started#connecting-webhook="
             )
             private var webhook: Long = 0
             
@@ -95,7 +95,7 @@ object ConfigInstance:ConfigContainer {
         override fun getComment(): String {
             return """
                 You can toggle and customize messages that are being sent
-                More on https://wiki.ru/
+                More on https://github.com/rogi27/Fabric2Discord/wiki/Messages
                 """.trimIndent()
         }
         
