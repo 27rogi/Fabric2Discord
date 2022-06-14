@@ -6,18 +6,16 @@ import discord4j.core.spec.EmbedCreateSpec
 import discord4j.discordjson.json.EmbedData
 import discord4j.rest.util.Color
 import eu.pb4.placeholders.api.PlaceholderContext
-import eu.pb4.placeholders.api.Placeholders
 import eu.pb4.placeholders.api.Placeholders.parseText
 import eu.pb4.placeholders.api.TextParserUtils
-import eu.pb4.placeholders.api.parsers.TextParserV1
-import net.minecraft.network.message.MessageSender
 import net.minecraft.network.message.MessageType
 import net.minecraft.server.MinecraftServer
 import net.minecraft.server.PlayerManager
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.text.Text
-import space.ryzhenkov.Fabric2Discord.ClientInstance.client
-import space.ryzhenkov.Fabric2Discord.ConfigInstance
+import space.ryzhenkov.Fabric2Discord.F2DClient.client
+import space.ryzhenkov.Fabric2Discord.config.F2DConfig
+import space.ryzhenkov.Fabric2Discord.config.IConfigEmbedMessage
 import java.time.Instant
 import java.util.*
 
@@ -32,7 +30,7 @@ object MessageUtils {
     
     fun sendMinecraftMessage(playerManager: PlayerManager, user: User, message: Text) {
         val formattedMessage = format(
-            ConfigInstance.messages.format.replace("%discord_user%", user.username).replace("%discord_tag%", user.discriminator), playerManager.server
+            F2DConfig.messages.format.replace("%discord_user%", user.username).replace("%discord_tag%", user.discriminator), playerManager.server
         ).copy().append(message)
     
         playerManager.broadcast(formattedMessage, MessageType.CHAT)

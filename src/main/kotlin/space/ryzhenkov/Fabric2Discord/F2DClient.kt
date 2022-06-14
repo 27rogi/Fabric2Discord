@@ -6,14 +6,14 @@ import discord4j.core.event.domain.lifecycle.ReadyEvent
 import discord4j.core.event.domain.message.MessageCreateEvent
 import discord4j.core.`object`.entity.User
 import eu.pb4.placeholders.api.TextParserUtils
-import eu.pb4.placeholders.api.parsers.TextParserV1
 import net.minecraft.server.MinecraftServer
+import space.ryzhenkov.Fabric2Discord.config.F2DConfig
 import space.ryzhenkov.Fabric2Discord.utils.MessageUtils
 
 
-object ClientInstance {
+object F2DClient {
     
-    var client: DiscordClient = DiscordClient.create(ConfigInstance.general.token)
+    var client: DiscordClient = DiscordClient.create(F2DConfig.general.token)
     var loggedClient: GatewayDiscordClient? = client.login().block()
     var minecraftServer: MinecraftServer? = null
     
@@ -37,7 +37,7 @@ object ClientInstance {
             }
             if (event.message.attachments.isNotEmpty()) {
                 MessageUtils.sendMinecraftMessage(minecraftServer!!.playerManager, author, TextParserUtils.formatText(event.message.attachments.joinToString { attachment ->
-                    ConfigInstance.messages.formattedAttachment.replace("%attachment_url%", attachment.url).replace("%attachment_name%", if (attachment.filename.length > 14) "${attachment.filename.substring(0, 14)}..." else attachment.filename)
+                    F2DConfig.messages.formattedAttachment.replace("%attachment_url%", attachment.url).replace("%attachment_name%", if (attachment.filename.length > 14) "${attachment.filename.substring(0, 14)}..." else attachment.filename)
                 }))
             }
         }

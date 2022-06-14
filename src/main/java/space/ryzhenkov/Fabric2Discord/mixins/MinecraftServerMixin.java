@@ -11,8 +11,8 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import space.ryzhenkov.Fabric2Discord.ClientInstance;
-import space.ryzhenkov.Fabric2Discord.ConfigInstance;
+import space.ryzhenkov.Fabric2Discord.F2DClient;
+import space.ryzhenkov.Fabric2Discord.config.F2DConfig;
 import space.ryzhenkov.Fabric2Discord.F2D;
 import space.ryzhenkov.Fabric2Discord.utils.MessageUtils;
 
@@ -32,43 +32,43 @@ public abstract class MinecraftServerMixin {
 
     @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/server/MinecraftServer;setFavicon(Lnet/minecraft/server/ServerMetadata;)V", ordinal = 0), method = "runServer")
     private void afterSetupServer(CallbackInfo info) {
-        ClientInstance.INSTANCE.setMinecraftServer(this.getPlayerManager().getServer());
+        F2DClient.INSTANCE.setMinecraftServer(this.getPlayerManager().getServer());
 
-        if (ConfigInstance.general.ids.INSTANCE.getLogChannel() == null) return;
-        MessageUtils.INSTANCE.sendEmbedMessage(ConfigInstance.general.ids.INSTANCE.getLogChannel(),
-                MessageUtils.INSTANCE.getConfigMessage(ConfigInstance.messages.serverStart.INSTANCE, ClientInstance.INSTANCE.getMinecraftServer(), null, null)
+        if (F2DConfig.general.ids.INSTANCE.getLogChannel() == null) return;
+        MessageUtils.INSTANCE.sendEmbedMessage(F2DConfig.general.ids.INSTANCE.getLogChannel(),
+                MessageUtils.INSTANCE.getConfigMessage(F2DConfig.messages.serverStart.INSTANCE, F2DClient.INSTANCE.getMinecraftServer(), null, null)
                         .build().asRequest()
         );
 
-        if (ConfigInstance.general.status.INSTANCE.getEnabled()) {
+        if (F2DConfig.general.status.INSTANCE.getEnabled()) {
             timer.schedule(new TimerTask() {
                 @Override
                 public void run() {
                     var presence = MessageUtils.INSTANCE.format(
-                            ConfigInstance.general.status.INSTANCE.getVariants()[(int) (System.currentTimeMillis() % ConfigInstance.general.status.INSTANCE.getVariants().length)],
-                            ClientInstance.INSTANCE.getMinecraftServer(), null
+                            F2DConfig.general.status.INSTANCE.getVariants()[(int) (System.currentTimeMillis() % F2DConfig.general.status.INSTANCE.getVariants().length)],
+                            F2DClient.INSTANCE.getMinecraftServer(), null
                     ).getString();
-                    ClientInstance.INSTANCE.getLoggedClient().updatePresence(ClientPresence.of(
-                            Status.valueOf(ConfigInstance.general.status.INSTANCE.getType()),
+                    F2DClient.INSTANCE.getLoggedClient().updatePresence(ClientPresence.of(
+                            Status.valueOf(F2DConfig.general.status.INSTANCE.getType()),
                             // TODO: Add activity type selection in config
                             ClientActivity.playing(presence)
                     )).subscribe();
                     F2D.logger.debug("Presence was updated to `" + presence + "`");
                 }
-            }, TimeUnit.SECONDS.toMillis(1), TimeUnit.MINUTES.toMillis(ConfigInstance.general.status.INSTANCE.getInterval()));
+            }, TimeUnit.SECONDS.toMillis(1), TimeUnit.MINUTES.toMillis(F2DConfig.general.status.INSTANCE.getInterval()));
         }
     }
 
     @Inject(at = @At("TAIL"), method = "shutdown")
     private void afterShutdownServer(CallbackInfo info) {
-        if (ConfigInstance.general.ids.INSTANCE.getLogChannel() != null) {
-            MessageUtils.INSTANCE.sendEmbedMessage(ConfigInstance.general.ids.INSTANCE.getLogChannel(),
-                    MessageUtils.INSTANCE.getConfigMessage(ConfigInstance.messages.serverStop.INSTANCE, ClientInstance.INSTANCE.getMinecraftServer(), null, null)
+        if (F2DConfig.general.ids.INSTANCE.getLogChannel() != null) {
+            MessageUtils.INSTANCE.sendEmbedMessage(F2DConfig.general.ids.INSTANCE.getLogChannel(),
+                    MessageUtils.INSTANCE.getConfigMessage(F2DConfig.messages.serverStop.INSTANCE, F2DClient.INSTANCE.getMinecraftServer(), null, null)
                             .build().asRequest()
             );
         }
 
-        if (ConfigInstance.general.status.INSTANCE.getEnabled()) timer.cancel();
-        ClientInstance.INSTANCE.getLoggedClient().logout().block();
+        if (F2DConfig.general.status.INSTANCE.getEnabled()) timer.cancel();
+        F2DClient.INSTANCE.getLoggedClient().logout().block();
     }
 }

@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import space.ryzhenkov.Fabric2Discord.ConfigInstance;
+import space.ryzhenkov.Fabric2Discord.config.F2DConfig;
 import space.ryzhenkov.Fabric2Discord.utils.MessageUtils;
 
 import java.util.HashMap;
@@ -29,15 +29,15 @@ public abstract class PlayerAdvancementTrackerMixin {
 
     @Inject(method = "grantCriterion", at = @At(value = "INVOKE", shift = At.Shift.AFTER, target = "Lnet/minecraft/server/PlayerManager;broadcast(Lnet/minecraft/text/Text;Lnet/minecraft/util/registry/RegistryKey;)V"))
     private void grantCriterion(Advancement advancement, String criterionName, CallbackInfoReturnable<Boolean> cir) {
-        if (ConfigInstance.general.ids.INSTANCE.getLogChannel() == null) return;
+        if (F2DConfig.general.ids.INSTANCE.getLogChannel() == null) return;
 
         HashMap<String, String> replacements = new HashMap<>();
         replacements.put("advancement_name", advancement.getDisplay().getTitle().getString());
         replacements.put("advancement_description", advancement.getDisplay().getDescription().getString());
         replacements.put("advancement_id", advancement.getDisplay().getFrame().getId());
 
-        MessageUtils.INSTANCE.sendEmbedMessage(ConfigInstance.general.ids.INSTANCE.getLogChannel(),
-                MessageUtils.INSTANCE.getConfigMessage(ConfigInstance.messages.playerAdvancement.INSTANCE, null, owner, replacements)
+        MessageUtils.INSTANCE.sendEmbedMessage(F2DConfig.general.ids.INSTANCE.getLogChannel(),
+                MessageUtils.INSTANCE.getConfigMessage(F2DConfig.messages.playerAdvancement.INSTANCE, null, owner, replacements)
                         .build().asRequest()
         );
     }
