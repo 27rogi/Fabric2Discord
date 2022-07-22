@@ -27,6 +27,8 @@ public abstract class ServerPlayNetworkHandlerMixin {
 
     @Inject(method = "handleMessage", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/message/MessageDecorator;decorateChat(Lnet/minecraft/server/network/ServerPlayerEntity;Lnet/minecraft/server/filter/FilteredMessage;Lnet/minecraft/network/message/MessageSignature;Z)Ljava/util/concurrent/CompletableFuture;"))
     private void onPlayerMessageEvent(ChatMessageC2SPacket packet, FilteredMessage<String> message, CallbackInfo ci) {
+        if (!F2DConfig.messages.chatMessage.INSTANCE.getEnabled()) return;
+
         HashMap<String, String> replacements = new HashMap<>();
         replacements.put("message", message.filtered());
 
@@ -55,6 +57,7 @@ public abstract class ServerPlayNetworkHandlerMixin {
 
     @Inject(method = "onDisconnected", at = @At("HEAD"))
     private void remove(Text reason, CallbackInfo ci) {
+        if (!F2DConfig.messages.playerLeave.INSTANCE.getEnabled()) return;
         if (F2DConfig.general.ids.INSTANCE.getLogChannel() == null) return;
 
         HashMap<String, String> replacements = new HashMap<>();

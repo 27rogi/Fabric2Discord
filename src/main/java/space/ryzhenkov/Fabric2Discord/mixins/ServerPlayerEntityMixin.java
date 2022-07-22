@@ -29,6 +29,7 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
 
     @Inject(method = "onDeath(Lnet/minecraft/entity/damage/DamageSource;)V", at = @At("HEAD"))
     private void onDeath(DamageSource source, CallbackInfo ci) throws CommandSyntaxException {
+        if (!F2DConfig.messages.playerDeath.INSTANCE.getEnabled()) return;
         if (F2DConfig.general.ids.INSTANCE.getLogChannel() == null) return;
 
         HashMap<String, String> replacements = new HashMap<>();
@@ -43,6 +44,7 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
 
     @Inject(method = "worldChanged", at = @At("TAIL"))
     private void worldChanged(ServerWorld origin, CallbackInfo ci) throws CommandSyntaxException {
+        if (!F2DConfig.messages.playerDimension.INSTANCE.getEnabled()) return;
         if (F2DConfig.general.ids.INSTANCE.getLogChannel() == null) return;
 
         HashMap<String, String> replacements = new HashMap<>();

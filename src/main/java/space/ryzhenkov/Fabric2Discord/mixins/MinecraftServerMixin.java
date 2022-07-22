@@ -32,6 +32,7 @@ public abstract class MinecraftServerMixin {
 
     @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/server/MinecraftServer;setFavicon(Lnet/minecraft/server/ServerMetadata;)V", ordinal = 0), method = "runServer")
     private void afterSetupServer(CallbackInfo info) {
+        if (!F2DConfig.messages.serverStart.INSTANCE.getEnabled()) return;
         F2DClient.INSTANCE.setMinecraftServer(this.getPlayerManager().getServer());
 
         if (F2DConfig.general.ids.INSTANCE.getLogChannel() == null) return;
@@ -61,6 +62,7 @@ public abstract class MinecraftServerMixin {
 
     @Inject(at = @At("TAIL"), method = "shutdown")
     private void afterShutdownServer(CallbackInfo info) {
+        if (!F2DConfig.messages.serverStop.INSTANCE.getEnabled()) return;
         if (F2DConfig.general.ids.INSTANCE.getLogChannel() != null) {
             MessageUtils.INSTANCE.sendEmbedMessage(F2DConfig.general.ids.INSTANCE.getLogChannel(),
                     MessageUtils.INSTANCE.getConfigMessage(F2DConfig.messages.serverStop.INSTANCE, F2DClient.INSTANCE.getMinecraftServer(), null, null)

@@ -29,6 +29,7 @@ public abstract class PlayerAdvancementTrackerMixin {
 
     @Inject(method = "grantCriterion", at = @At(value = "INVOKE", shift = At.Shift.AFTER, target = "Lnet/minecraft/server/PlayerManager;broadcast(Lnet/minecraft/text/Text;Lnet/minecraft/util/registry/RegistryKey;)V"))
     private void grantCriterion(Advancement advancement, String criterionName, CallbackInfoReturnable<Boolean> cir) {
+        if (!F2DConfig.messages.playerAdvancement.INSTANCE.getEnabled()) return;
         if (F2DConfig.general.ids.INSTANCE.getLogChannel() == null) return;
 
         HashMap<String, String> replacements = new HashMap<>();
