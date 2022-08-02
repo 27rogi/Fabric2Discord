@@ -33,7 +33,7 @@ object MessageUtils {
             F2DConfig.messages.format.replace("%discord_user%", user.username).replace("%discord_tag%", user.discriminator), playerManager.server
         ).copy().append(message)
     
-        playerManager.broadcast(formattedMessage, MessageType.SYSTEM)
+        playerManager.broadcast(formattedMessage, false)
     }
     
     // TODO: Rework this function for a better performance.

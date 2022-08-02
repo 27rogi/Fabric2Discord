@@ -18,16 +18,10 @@ import java.util.HashMap;
 @Mixin(PlayerAdvancementTracker.class)
 public abstract class PlayerAdvancementTrackerMixin {
 
-    String advancementString;
-
     @Shadow
     private ServerPlayerEntity owner;
 
-    @Shadow
-    @Final
-    private PlayerManager playerManager;
-
-    @Inject(method = "grantCriterion", at = @At(value = "INVOKE", shift = At.Shift.AFTER, target = "Lnet/minecraft/server/PlayerManager;broadcast(Lnet/minecraft/text/Text;Lnet/minecraft/util/registry/RegistryKey;)V"))
+    @Inject(method = "grantCriterion", at = @At(value = "INVOKE", shift = At.Shift.AFTER, target = "Lnet/minecraft/server/PlayerManager;broadcast(Lnet/minecraft/text/Text;Z)V"))
     private void grantCriterion(Advancement advancement, String criterionName, CallbackInfoReturnable<Boolean> cir) {
         if (!F2DConfig.messages.playerAdvancement.INSTANCE.getEnabled()) return;
         if (F2DConfig.general.ids.INSTANCE.getLogChannel() == null) return;

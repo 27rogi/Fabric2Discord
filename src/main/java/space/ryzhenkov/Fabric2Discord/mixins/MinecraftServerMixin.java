@@ -25,9 +25,6 @@ public abstract class MinecraftServerMixin {
     Timer timer = new Timer();
 
     @Shadow
-    public abstract ServerMetadata getServerMetadata();
-
-    @Shadow
     public abstract PlayerManager getPlayerManager();
 
     @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/server/MinecraftServer;setFavicon(Lnet/minecraft/server/ServerMetadata;)V", ordinal = 0), method = "runServer")

@@ -2,6 +2,7 @@ package space.ryzhenkov.Fabric2Discord.mixins;
 
 import discord4j.discordjson.json.WebhookExecuteRequest;
 import discord4j.rest.util.MultipartRequest;
+import net.minecraft.network.message.SignedMessage;
 import net.minecraft.network.packet.c2s.play.ChatMessageC2SPacket;
 import net.minecraft.server.filter.FilteredMessage;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -16,6 +17,7 @@ import space.ryzhenkov.Fabric2Discord.config.F2DConfig;
 import space.ryzhenkov.Fabric2Discord.utils.MessageUtils;
 
 import java.util.HashMap;
+import java.util.concurrent.CompletableFuture;
 
 @Mixin(net.minecraft.server.network.ServerPlayNetworkHandler.class)
 public abstract class ServerPlayNetworkHandlerMixin {
@@ -25,12 +27,14 @@ public abstract class ServerPlayNetworkHandlerMixin {
     @Shadow
     public abstract ServerPlayerEntity getPlayer();
 
-    @Inject(method = "handleMessage", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/message/MessageDecorator;decorateChat(Lnet/minecraft/server/network/ServerPlayerEntity;Lnet/minecraft/server/filter/FilteredMessage;Lnet/minecraft/network/message/MessageSignature;Z)Ljava/util/concurrent/CompletableFuture;"))
-    private void onPlayerMessageEvent(ChatMessageC2SPacket packet, FilteredMessage<String> message, CallbackInfo ci) {
+    @Shadow protected abstract CompletableFuture<FilteredMessage> filterText(String text);
+
+    @Inject(method = "handleDecoratedMessage", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/MinecraftServer;getPlayerManager()Lnet/minecraft/server/PlayerManager;"))
+    private void onPlayerMessageEvent(SignedMessage signedMessage, CallbackInfo ci) {
         if (!F2DConfig.messages.chatMessage.INSTANCE.getEnabled()) return;
 
         HashMap<String, String> replacements = new HashMap<>();
-        replacements.put("message", message.filtered());
+        replacements.put("message", signedMessage.getContent().getString());
 
         if (F2DConfig.general.ids.INSTANCE.getWebhookId() != null) {
             F2DClient.INSTANCE.getClient().getWebhookService().getWebhook(F2DConfig.general.ids.INSTANCE.getWebhookId().asLong()).subscribe(webhook -> {
