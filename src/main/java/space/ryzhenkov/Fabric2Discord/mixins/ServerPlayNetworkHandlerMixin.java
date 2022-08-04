@@ -17,6 +17,7 @@ import space.ryzhenkov.Fabric2Discord.config.F2DConfig;
 import space.ryzhenkov.Fabric2Discord.utils.MessageUtils;
 
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
 @Mixin(net.minecraft.server.network.ServerPlayNetworkHandler.class)
@@ -26,8 +27,6 @@ public abstract class ServerPlayNetworkHandlerMixin {
 
     @Shadow
     public abstract ServerPlayerEntity getPlayer();
-
-    @Shadow protected abstract CompletableFuture<FilteredMessage> filterText(String text);
 
     @Inject(method = "handleDecoratedMessage", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/MinecraftServer;getPlayerManager()Lnet/minecraft/server/PlayerManager;"))
     private void onPlayerMessageEvent(SignedMessage signedMessage, CallbackInfo ci) {
@@ -52,8 +51,8 @@ public abstract class ServerPlayNetworkHandlerMixin {
             return;
         }
 
-        if (F2DConfig.general.ids.INSTANCE.getLogChannel() == null) return;
-        MessageUtils.INSTANCE.sendEmbedMessage(F2DConfig.general.ids.INSTANCE.getLogChannel(),
+        if (F2DConfig.general.ids.INSTANCE.getChatChannel() == null) return;
+        MessageUtils.INSTANCE.sendEmbedMessage(F2DConfig.general.ids.INSTANCE.getChatChannel(),
                 MessageUtils.INSTANCE.getConfigMessage(F2DConfig.messages.chatMessage.INSTANCE, null, this.player, replacements)
                         .build().asRequest()
         );
