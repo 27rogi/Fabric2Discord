@@ -24,6 +24,7 @@ object F2DClient {
             F2D.logger.info("Connected as {}#{}", self.username, self.discriminator)
         }
         loggedClient!!.on(MessageCreateEvent::class.java).subscribe { event: MessageCreateEvent ->
+            if (event.message.channelId !== F2DConfig.general.ids.getChatChannel()) return@subscribe
             if ((event.message.author.isEmpty || event.message.author.get().isBot) || event.message.webhookId.isPresent) return@subscribe
             if (minecraftServer == null) {
                 F2D.logger.error("Attempt to send message with MinecraftServer being null!")
