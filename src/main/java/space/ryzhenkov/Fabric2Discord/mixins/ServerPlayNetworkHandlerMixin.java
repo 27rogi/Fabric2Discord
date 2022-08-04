@@ -48,8 +48,8 @@ public abstract class ServerPlayNetworkHandlerMixin {
             return;
         }
 
-        if (F2DConfig.general.ids.INSTANCE.getLogChannel() == null) return;
-        MessageUtils.INSTANCE.sendEmbedMessage(F2DConfig.general.ids.INSTANCE.getLogChannel(),
+        if (F2DConfig.general.ids.INSTANCE.getChatChannel() == null) return;
+        MessageUtils.INSTANCE.sendEmbedMessage(F2DConfig.general.ids.INSTANCE.getChatChannel(),
                 MessageUtils.INSTANCE.getConfigMessage(F2DConfig.messages.chatMessage.INSTANCE, null, this.player, replacements)
                         .build().asRequest()
         );

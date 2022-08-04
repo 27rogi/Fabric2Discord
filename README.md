@@ -13,3 +13,8 @@ I wrote few helpful articles about this mod, so if you need help you can visit [
 - [TextPlaceholderAPI](https://github.com/Patbox/TextPlaceholderAPI) by [Patbox](https://github.com/Patbox)
 - [CompleteConfig](https://gitlab.com/Lortseam/completeconfig) by [Lortseam](https://gitlab.com/Lortseam)
 - [Discord4J](https://discord4j.com/)
+
+# 🖍️ Future plans
+- [ ] Add ability to dynamically specify channels using `Array`
+- [ ] Automate Webhook creation with ability to disable it
+- [ ] Reduce code duplication
