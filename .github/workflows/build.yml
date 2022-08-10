@@ -1,13 +1,11 @@
 name: Build F2D
-on: [pull_request, push]
+on: [pull_request, release]
 
 jobs:
   build:
     strategy:
       matrix:
-        java: [
-          17,
-        ]
+        java: [ 17 ]
         os: [ubuntu-20.04]
     runs-on: ${{ matrix.os }}
     steps:
