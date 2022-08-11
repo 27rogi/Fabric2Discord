@@ -31,7 +31,7 @@ jobs:
           curseforge-token: ${{ secrets.CURSE_TOKEN }}
           files-primary: build/libs/!(*-@(dev|sources|shadow|all)).jar
           name: ""
-          version: f2d-${{ github.ref_name }}+1.19.2
+          version: f2d-${{ github.ref_name }}
           version-type: release
           loaders: |
             fabric
