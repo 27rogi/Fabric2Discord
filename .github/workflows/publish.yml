@@ -1,0 +1,46 @@
+name: Publish Release
+on: 
+  release: [published]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout repository
+        uses: actions/checkout@v2
+      - name: validate gradle wrapper
+        uses: gradle/wrapper-validation-action@v1
+      - name: setup jdk 17
+        uses: actions/setup-java@v1
+        with:
+          java-version: 17
+      - name: make gradle wrapper executable
+        run: chmod +x ./gradlew
+      - name: Build with Gradle
+        uses: gradle/gradle-build-action@v2
+        with:
+          gradle-version: current
+          arguments: build --stacktrace
+      - name: publish
+      - uses: Kir-Antipov/mc-publish@v3.1
+        with:
+          modrinth-id: EyyEnN7W
+          modrinth-featured: true
+          modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
+          curseforge-id: 633292
+          curseforge-token: ${{ secrets.CURSE_TOKEN }}
+          files-primary: build/libs/!(*-@(dev|sources|shadow|all)).jar
+          name: ""
+          version: f2d-${{ github.ref_name }}+1.19.2
+          version-type: release
+          loaders: |
+            fabric
+            quilt
+          game-versions: |
+            1.19.2
+            1.19.1
+          java: |
+            17
+          retry-attempts: 2
+          retry-delay: 10000
+          fail-mode: fail
