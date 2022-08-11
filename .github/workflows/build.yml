@@ -2,6 +2,13 @@ name: Make Dev Build
 on: 
   pull_request:
   push:
+    paths:
+      - '**.java'
+      - '**.kt'
+      - '**.properties'
+      - '**.json'
+      - '**.gradle'
+      - '**.gradlew'
 
 jobs:
   build:
