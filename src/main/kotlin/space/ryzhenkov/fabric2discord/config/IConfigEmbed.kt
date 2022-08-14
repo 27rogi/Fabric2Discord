@@ -1,6 +1,6 @@
-package space.ryzhenkov.Fabric2Discord.config
+package space.ryzhenkov.fabric2discord.config
 
-interface IConfigEmbedMessage {
+interface IConfigEmbed {
     var enabled: Boolean
     var header: String
     var message: String

@@ -1,4 +1,4 @@
-package space.ryzhenkov.Fabric2Discord.utils
+package space.ryzhenkov.fabric2discord.utils
 
 import eu.pb4.placeholders.api.PlaceholderResult
 import eu.pb4.placeholders.api.Placeholders

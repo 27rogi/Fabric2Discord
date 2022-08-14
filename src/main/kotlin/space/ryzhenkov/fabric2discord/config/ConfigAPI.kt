@@ -1,15 +1,15 @@
-package space.ryzhenkov.Fabric2Discord.config
+package space.ryzhenkov.fabric2discord.config
 
-import discord4j.common.util.Snowflake
+import dev.kord.common.entity.Snowflake
 import me.lortseam.completeconfig.api.ConfigContainer
 import me.lortseam.completeconfig.api.ConfigContainer.Transitive
 import me.lortseam.completeconfig.api.ConfigEntries
 import me.lortseam.completeconfig.api.ConfigEntry
 import me.lortseam.completeconfig.api.ConfigGroup
 
-object F2DConfig:ConfigContainer {
+object ConfigAPI : ConfigContainer {
     @Transitive
-    object general:ConfigGroup {
+    object general : ConfigGroup {
         @Override
         override fun getComment(): String {
             return """
@@ -21,74 +21,77 @@ object F2DConfig:ConfigContainer {
             https://placeholders.pb4.eu/
             """.trimIndent()
         }
-        
+
         @ConfigEntry(comment = "Your token should be here, check https://github.com/rogi27/Fabric2Discord/wiki/Getting-Started#connecting-webhook=")
         var token = ""
-        
+
         @Transitive
-        object status:ConfigGroup {
+        object status : ConfigGroup {
             @Override
             override fun getComment(): String {
                 return "Here you can enable custom bot statuses"
             }
-            
+
             @ConfigEntry(comment = "Enables or disables this feature")
             var enabled: Boolean = true
-    
+
             @ConfigEntry(comment = "Status type, variants: ONLINE, IDLE, DO_NOT_DISTURB, INVISIBLE, OFFLINE")
             var type: String = "DO_NOT_DISTURB"
-    
+
             @ConfigEntry(comment = "Status update interval in minutes (min = 1, max = 120)")
             @ConfigEntry.BoundedInteger(min = 1, max = 120)
             var interval: Int = 1
-    
+
             @ConfigEntry(
                 comment = "Status variants, chosen randomly.\n" + "Supports SERVER placeholders"
             )
             var variants: Array<String> = arrayOf("Fabric", "with %server:online% dudes", "in %world:name%")
         }
-        
+
         @Transitive
-        object ids:ConfigGroup {
+        object ids : ConfigGroup {
             @Override
             override fun getComment(): String {
                 return "Here you specify ids for mod to work, setting value to 0 disables the feature"
             }
-            
+
             @ConfigEntry(
                 comment = "Snowflake (id) of the channel used for join, leave, death and etc. messages\n" + "More on https://github.com/rogi27/Fabric2Discord/wiki/Getting-Started#basic-setup="
             )
-            private var logChannel: Long = 0
-            
+            var logChannel: Long = 0
+
             @ConfigEntry(
                 comment = "Snowflake (id) of the channel used to link Discord and Minecraft messages\n" + "More on https://github.com/rogi27/Fabric2Discord/wiki/Getting-Started#basic-setup="
             )
-            private var chatChannel: Long = 0
-            
+            var chatChannel: Long = 0
+
             @ConfigEntry(
-                comment = "Snowflake (id) of the webhook used to send Minecraft messages using player data\n" + "More on https://github.com/rogi27/Fabric2Discord/wiki/Getting-Started#connecting-webhook="
+                comment = "Snowflake (id) of the webhook used to send Minecraft messages using player data\n"
+                        + "Using -1 as parameter will result in creation of new webhook \n"
+                        + "Using 0 as parameter will result in disabling webhook functionality \n"
+                        + "More on https://github.com/rogi27/Fabric2Discord/wiki/Getting-Started#connecting-webhook="
             )
-            private var webhook: Long = 0
-            
-            fun getWebhookId(): Snowflake? {
-                if (webhook <= 0) return null
-                return Snowflake.of(webhook)
+            var webhook: Long = -1
+
+            fun getWebhookOrNull(): Snowflake? {
+                if (webhook.toInt() == -1 || webhook.toInt() == 0) return null
+                return Snowflake(webhook)
             }
-            
-            fun getLogChannel(): Snowflake? {
-                if (logChannel <= 0) return null
-                return Snowflake.of(logChannel)
+
+            fun getLogChannelOrNull(): Snowflake? {
+                if (logChannel.toInt() == 0) return null
+                return Snowflake(logChannel)
             }
-            
-            fun getChatChannel(): Snowflake? {
-                if (chatChannel <= 0) return null
-                return Snowflake.of(chatChannel)
+
+            fun getChatChannelOrNull(): Snowflake? {
+                if (chatChannel.toInt() == 0) return null
+                return Snowflake(chatChannel)
             }
         }
     }
-    
+
     @Transitive
-    object messages:ConfigGroup {
+    object messages : ConfigGroup {
         @Override
         override fun getComment(): String {
             return """
@@ -96,20 +99,20 @@ object F2DConfig:ConfigContainer {
                 More on https://github.com/rogi27/Fabric2Discord/wiki/Messages
                 """.trimIndent()
         }
-        
+
         @ConfigEntry(
             comment = "Formatting for messages from Discord\n" + "Custom placeholders: %discord_user%, %discord_tag%\n" + "Supports SERVER placeholders"
         )
         var format = "[<color:4ae485>F2D</color>] %discord_user%<gray>#%discord_tag%</gray>: "
-        
+
         @ConfigEntry(
             comment = "Formatting for attachments from Discord (merged with `format`)\n" + "Custom placeholders: %attachment_url%, %attachment_name%\n" + "Supports SERVER placeholders"
         )
         var formattedAttachment = "<blue><url:'%attachment_url%'>[%attachment_name%]</url></blue>"
-        
+
         @Transitive
         @ConfigEntries(includeAll = true)
-        object serverStart:ConfigGroup, IConfigEmbedMessage {
+        object serverStart : ConfigGroup, IConfigEmbed {
             @Override
             override fun getComment(): String {
                 return """
@@ -117,7 +120,7 @@ object F2DConfig:ConfigContainer {
                 Supports SERVER placeholders
                 """.trimIndent()
             }
-            
+
             override var enabled: Boolean = true
             override var header: String = ":white_check_mark: Server started!"
             override var message: String = "It's %world:time% (day %world:day%) in the world."
@@ -128,10 +131,10 @@ object F2DConfig:ConfigContainer {
             override var iconHeader: String = ""
             override var iconFooter: String = ""
         }
-        
+
         @Transitive
         @ConfigEntries(includeAll = true)
-        object serverStop:ConfigGroup, IConfigEmbedMessage {
+        object serverStop : ConfigGroup, IConfigEmbed {
             @Override
             override fun getComment(): String {
                 return """
@@ -139,7 +142,7 @@ object F2DConfig:ConfigContainer {
                 Supports SERVER placeholders
                 """.trimIndent()
             }
-            
+
             override var enabled: Boolean = true
             override var header: String = ":stop_sign: Server stopped!"
             override var message: String = "You can wait a little for it to start again!"
@@ -150,10 +153,10 @@ object F2DConfig:ConfigContainer {
             override var iconHeader: String = ""
             override var iconFooter: String = ""
         }
-        
+
         @Transitive
         @ConfigEntries(includeAll = true)
-        object playerJoin:ConfigGroup, IConfigEmbedMessage {
+        object playerJoin : ConfigGroup, IConfigEmbed {
             @Override
             override fun getComment(): String {
                 return """
@@ -161,7 +164,7 @@ object F2DConfig:ConfigContainer {
                 Supports PLAYER placeholders
                 """.trimIndent()
             }
-            
+
             override var enabled: Boolean = true
             override var header: String = "%player:name% has joined"
             override var message: String = ""
@@ -172,10 +175,10 @@ object F2DConfig:ConfigContainer {
             override var iconHeader: String = "https://minotar.net/cube/%player:name%/100.png"
             override var iconFooter: String = ""
         }
-        
+
         @Transitive
         @ConfigEntries(includeAll = true)
-        object playerLeave:ConfigGroup, IConfigEmbedMessage {
+        object playerLeave : ConfigGroup, IConfigEmbed {
             @Override
             override fun getComment(): String {
                 return """
@@ -184,7 +187,7 @@ object F2DConfig:ConfigContainer {
                 Supports PLAYER placeholders
                 """.trimIndent()
             }
-            
+
             override var enabled: Boolean = true
             override var header: String = "%player:name% has left"
             override var message: String = ""
@@ -195,10 +198,10 @@ object F2DConfig:ConfigContainer {
             override var iconHeader: String = "https://minotar.net/cube/%player:name%/100.png"
             override var iconFooter: String = ""
         }
-        
+
         @Transitive
         @ConfigEntries(includeAll = true)
-        object playerAdvancement:ConfigGroup, IConfigEmbedMessage {
+        object playerAdvancement : ConfigGroup, IConfigEmbed {
             @Override
             override fun getComment(): String {
                 return """
@@ -207,7 +210,7 @@ object F2DConfig:ConfigContainer {
                 Supports PLAYER placeholders
                 """.trimIndent()
             }
-            
+
             override var enabled: Boolean = true
             override var header: String = "%player:name% got %advancement_name%"
             override var message: String = "%advancement_description%"
@@ -218,10 +221,10 @@ object F2DConfig:ConfigContainer {
             override var iconHeader: String = ""
             override var iconFooter: String = ""
         }
-        
+
         @Transitive
         @ConfigEntries(includeAll = true)
-        object playerDeath:ConfigGroup, IConfigEmbedMessage {
+        object playerDeath : ConfigGroup, IConfigEmbed {
             @Override
             override fun getComment(): String {
                 return """
@@ -230,7 +233,7 @@ object F2DConfig:ConfigContainer {
                 Supports PLAYER placeholders
                 """.trimIndent()
             }
-            
+
             override var enabled: Boolean = true
             override var header: String = ":skull: got killed by %death_by%"
             override var message: String = "%death_message%"
@@ -241,10 +244,10 @@ object F2DConfig:ConfigContainer {
             override var iconHeader: String = ""
             override var iconFooter: String = "https://source.unsplash.com/128x128/?death"
         }
-        
+
         @Transitive
         @ConfigEntries(includeAll = true)
-        object playerDimension:ConfigGroup, IConfigEmbedMessage {
+        object playerDimension : ConfigGroup, IConfigEmbed {
             @Override
             override fun getComment(): String {
                 return """
@@ -253,7 +256,7 @@ object F2DConfig:ConfigContainer {
                 Supports PLAYER placeholders
                 """.trimIndent()
             }
-            
+
             override var enabled: Boolean = true
             override var header: String = "%player:name% has teleported to %player:world%"
             override var message: String = ""
@@ -264,10 +267,10 @@ object F2DConfig:ConfigContainer {
             override var iconHeader: String = "https://minotar.net/cube/%player:name%/100.png"
             override var iconFooter: String = ""
         }
-        
+
         @Transitive
         @ConfigEntries(includeAll = true)
-        object chatMessage:ConfigGroup, IConfigEmbedMessage {
+        object chatMessage : ConfigGroup, IConfigEmbed {
             @Override
             override fun getComment(): String {
                 return """
@@ -276,7 +279,7 @@ object F2DConfig:ConfigContainer {
                 Supports PLAYER placeholders
                 """.trimIndent()
             }
-            
+
             override var enabled: Boolean = true
             override var header: String = "%player:name%"
             override var message: String = "%message%"
@@ -288,7 +291,7 @@ object F2DConfig:ConfigContainer {
             override var iconFooter: String = ""
         }
     }
-    
+
     @ConfigEntry(comment = "Do not touch this value, it allows mod to check if config file is outdated or not.")
-    var configVersion = 1
+    var configVersion = 2
 }

@@ -18,7 +18,7 @@
     "main": [
       {
         "adapter": "kotlin",
-        "value": "space.ryzhenkov.Fabric2Discord.F2D"
+        "value": "space.ryzhenkov.fabric2discord.F2D"
       }
     ]
   },

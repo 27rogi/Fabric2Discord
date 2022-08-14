@@ -1,7 +1,10 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
 plugins {
     id 'fabric-loom'
     id 'maven-publish'
     id "org.jetbrains.kotlin.jvm"
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
 }
 
 sourceCompatibility = JavaVersion.VERSION_17
@@ -12,6 +15,8 @@ version = project.mod_version
 group = project.maven_group
 
 repositories {
+    mavenCentral()
+
     maven {
         url 'https://jitpack.io'
     }
@@ -33,43 +38,21 @@ repositories {
     maven {
         url 'https://repo.spring.io/libs-snapshot'
     }
-    mavenCentral()
+    maven {
+        url "https://oss.sonatype.org/content/repositories/snapshots"
+    }
 
     // Add repositories to retrieve artifacts from in here.
-	// You should only use this when depending on other mods because
-	// Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
-	// See https://docs.gradle.org/current/userguide/declaring_repositories.html
-	// for more information about repositories.
+    // You should only use this when depending on other mods because
+    // Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
+    // See https://docs.gradle.org/current/userguide/declaring_repositories.html
+    // for more information about repositories.
 }
 
 dependencies {
     // yeah... i got really tired finding all of them...
     // is there another way to bundle D4J with all that stuff? ,_,
-    include 'com.github.ben-manes.caffeine:caffeine:3.1.0'
-    include 'io.micrometer:context-propagation-api:1.0.0-M2'
-    include 'com.fasterxml.jackson.core:jackson-core:2.13.3'
-    include 'com.fasterxml.jackson.module:jackson-modules-java8:2.13.3'
-    include 'com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.13.3'
-    include 'com.fasterxml.jackson.core:jackson-annotations:2.13.3'
-    include 'com.fasterxml.jackson.core:jackson-databind:2.13.3'
-    include 'io.netty:netty-codec:4.1.77.Final'
-    include 'io.netty:netty-codec-dns:4.1.77.Final'
-    include('io.netty:netty-codec-http:4.1.77.Final')
-    include('io.netty:netty-codec-http2:4.1.77.Final')
-    include('io.netty:netty-resolver-dns:4.1.77.Final')
-    include("org.reactivestreams:reactive-streams:1.0.4")
-    include("io.projectreactor:reactor-core:3.5.0-M2")
-    include("io.projectreactor.netty:reactor-netty-core:1.1.0-M2")
-    include("io.projectreactor.netty:reactor-netty-http:1.1.0-M2")
-    include("io.projectreactor.addons:reactor-extra:3.4.8")
-    include 'com.discord4j:discord-json-api:1.7.1'
-    include('com.discord4j:discord-json:1.6.12')
-    include('com.discord4j:stores-api:3.2.1')
-    modImplementation include('com.discord4j:discord4j-voice:3.2.2')
-    modImplementation include('com.discord4j:discord4j-gateway:3.2.2')
-    modImplementation include('com.discord4j:discord4j-common:3.2.2')
-    modImplementation include('com.discord4j:discord4j-core:3.2.2')
-    modImplementation include('com.discord4j:discord4j-rest:3.2.2')
+    modImplementation include('dev.kord:kord-core:0.8.0-M15')
 
     //to change the versions see the gradle.properties file
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
@@ -84,6 +67,9 @@ dependencies {
 
     modImplementation include("com.gitlab.Lortseam.completeconfig:base:2.0.0")
     modImplementation include("eu.pb4:placeholder-api:2.0.0-beta.7+1.19")
+
+    modImplementation include('com.vdurmont:emoji-java:5.1.1')
+    shadow 'dev.kord:kord-core:0.8.0-M15'
 }
 
 processResources {
@@ -104,6 +90,18 @@ tasks.withType(JavaCompile) {
     it.options.release = 17
 }
 
+shadowJar {
+    configurations = [project.configurations.shadow]
+    archiveClassifier.set("shadow")
+
+    exclude("kotlin/**", "kotlinx/coroutines/**", "kotlinx/serialization/**", "javax/**", "META-INF")
+    exclude("org/checkerframework/**", "org/intellij/**", "org/jetbrains/annotations/**")
+    exclude("com/google/gson/**")
+    exclude("org/slf4j/**")
+    exclude("org/bouncycastle/**")
+    exclude("com/codahale/**")
+}
+
 java {
     // Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
     // if it is present.
@@ -112,9 +110,18 @@ java {
 }
 
 jar {
-    from ("LICENSE") {
-        rename { "${it}_${project.archivesBaseName}"}
+    from("LICENSE") {
+        rename { "${it}_${project.archivesBaseName}" }
     }
+}
+
+remapJar {
+    dependsOn shadowJar
+    from zipTree(shadowJar.archivePath)
+}
+
+artifacts {
+    archives shadowJar
 }
 
 // configure the maven publication
