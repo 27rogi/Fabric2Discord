@@ -68,8 +68,8 @@ dependencies {
     modImplementation include("com.gitlab.Lortseam.completeconfig:base:2.0.0")
     modImplementation include("eu.pb4:placeholder-api:2.0.0-beta.7+1.19")
 
-    modImplementation include('com.vdurmont:emoji-java:5.1.1')
     shadow 'dev.kord:kord-core:0.8.0-M15'
+    shadow 'com.vdurmont:emoji-java:5.1.1'
 }
 
 processResources {
