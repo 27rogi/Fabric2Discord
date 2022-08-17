@@ -111,7 +111,7 @@ object ConfigAPI : ConfigContainer {
         var formattedAttachment = "<blue><url:'%attachment_url%'>[%attachment_name%]</url></blue>"
 
         @Transitive
-        @ConfigEntries(includeAll = true)
+        @ConfigEntries
         object serverStart : ConfigGroup, IConfigEmbed {
             @Override
             override fun getComment(): String {
@@ -133,7 +133,7 @@ object ConfigAPI : ConfigContainer {
         }
 
         @Transitive
-        @ConfigEntries(includeAll = true)
+        @ConfigEntries
         object serverStop : ConfigGroup, IConfigEmbed {
             @Override
             override fun getComment(): String {
@@ -155,7 +155,7 @@ object ConfigAPI : ConfigContainer {
         }
 
         @Transitive
-        @ConfigEntries(includeAll = true)
+        @ConfigEntries
         object playerJoin : ConfigGroup, IConfigEmbed {
             @Override
             override fun getComment(): String {
@@ -177,7 +177,7 @@ object ConfigAPI : ConfigContainer {
         }
 
         @Transitive
-        @ConfigEntries(includeAll = true)
+        @ConfigEntries
         object playerLeave : ConfigGroup, IConfigEmbed {
             @Override
             override fun getComment(): String {
@@ -200,7 +200,7 @@ object ConfigAPI : ConfigContainer {
         }
 
         @Transitive
-        @ConfigEntries(includeAll = true)
+        @ConfigEntries
         object playerAdvancement : ConfigGroup, IConfigEmbed {
             @Override
             override fun getComment(): String {
@@ -223,7 +223,7 @@ object ConfigAPI : ConfigContainer {
         }
 
         @Transitive
-        @ConfigEntries(includeAll = true)
+        @ConfigEntries
         object playerDeath : ConfigGroup, IConfigEmbed {
             @Override
             override fun getComment(): String {
@@ -246,7 +246,7 @@ object ConfigAPI : ConfigContainer {
         }
 
         @Transitive
-        @ConfigEntries(includeAll = true)
+        @ConfigEntries
         object playerDimension : ConfigGroup, IConfigEmbed {
             @Override
             override fun getComment(): String {
@@ -269,7 +269,7 @@ object ConfigAPI : ConfigContainer {
         }
 
         @Transitive
-        @ConfigEntries(includeAll = true)
+        @ConfigEntries
         object chatMessage : ConfigGroup, IConfigEmbed {
             @Override
             override fun getComment(): String {

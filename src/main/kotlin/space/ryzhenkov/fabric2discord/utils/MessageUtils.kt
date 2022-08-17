@@ -8,11 +8,12 @@ import dev.kord.core.entity.User
 import dev.kord.core.entity.channel.TextChannel
 import dev.kord.rest.builder.message.EmbedBuilder
 import dev.kord.rest.builder.message.create.WebhookMessageCreateBuilder
-import eu.pb4.placeholders.api.PlaceholderContext
-import eu.pb4.placeholders.api.Placeholders.parseText
-import eu.pb4.placeholders.api.TextParserUtils
+import eu.pb4.placeholders.PlaceholderAPI
+import eu.pb4.placeholders.PlaceholderAPI.parseText
+import eu.pb4.placeholders.TextParser
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
+import net.minecraft.network.MessageType
 import net.minecraft.server.MinecraftServer
 import net.minecraft.server.PlayerManager
 import net.minecraft.server.network.ServerPlayerEntity
@@ -21,6 +22,7 @@ import space.ryzhenkov.fabric2discord.F2D
 import space.ryzhenkov.fabric2discord.KordInstance
 import space.ryzhenkov.fabric2discord.config.ConfigAPI
 import space.ryzhenkov.fabric2discord.config.IConfigEmbed
+import java.util.UUID
 
 
 object MessageUtils {
@@ -39,7 +41,7 @@ object MessageUtils {
                 .replace("%discord_tag%", user.discriminator), playerManager.server
         ).copy().append(message.invoke())
 
-        playerManager.broadcast(formattedMessage, false)
+        playerManager.broadcast(formattedMessage, MessageType.CHAT, UUID.nameUUIDFromBytes(user.discriminator.toByteArray()))
     }
 
     fun getEmbedMessage(
@@ -98,8 +100,8 @@ object MessageUtils {
 
     fun format(message: String, server: MinecraftServer?, customReplacements: HashMap<String, String>? = null): Text {
         val finalMessage = EmojiParser.parseToUnicode(replacer(message, customReplacements))
-        if (server != null) return parseText(TextParserUtils.formatText(finalMessage), PlaceholderContext.of(server))
-        return TextParserUtils.formatText(finalMessage)
+        if (server != null) return parseText(TextParser.parse(finalMessage), server)
+        return TextParser.parse(finalMessage)
     }
 
     fun format(
@@ -108,8 +110,8 @@ object MessageUtils {
         customReplacements: HashMap<String, String>? = null
     ): Text {
         val finalMessage = EmojiParser.parseToUnicode(replacer(message, customReplacements))
-        if (player != null) return parseText(TextParserUtils.formatText(finalMessage), PlaceholderContext.of(player))
-        return TextParserUtils.formatText(finalMessage)
+        if (player != null) return parseText(TextParser.parse(finalMessage), player)
+        return TextParser.parse(finalMessage)
     }
 
     fun replacer(message: String, replacements: HashMap<String, String>? = null): String {

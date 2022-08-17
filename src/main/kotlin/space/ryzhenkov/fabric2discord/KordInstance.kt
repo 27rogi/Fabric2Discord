@@ -6,7 +6,8 @@ import dev.kord.core.event.gateway.ReadyEvent
 import dev.kord.core.event.message.MessageCreateEvent
 import dev.kord.core.exception.KordInitializationException
 import dev.kord.core.on
-import eu.pb4.placeholders.api.TextParserUtils
+import eu.pb4.placeholders.TextParser
+import eu.pb4.placeholders.util.TextParserUtils
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -42,12 +43,12 @@ object KordInstance {
                 if ((message.author == null || message.author!!.isBot) || message.webhookId != null) return@on
                 if (message.content.isNotEmpty()) {
                     MessageUtils.sendMinecraftMessage(F2D.minecraftServer!!.playerManager, message.author!!) {
-                        TextParserUtils.formatTextSafe(MessageUtils.convertDiscordTags(message.content))
+                        TextParser.parse(MessageUtils.convertDiscordTags(message.content), )
                     }
                 }
                 if (message.attachments.isNotEmpty()) {
                     MessageUtils.sendMinecraftMessage(F2D.minecraftServer!!.playerManager, message.author!!) {
-                        TextParserUtils.formatText(message.attachments.joinToString { attachment ->
+                        TextParser.parse(message.attachments.joinToString { attachment ->
                             ConfigAPI.messages.formattedAttachment.replace("%attachment_url%", attachment.url).replace(
                                 "%attachment_name%",
                                 if (attachment.filename.length > 14) "${

@@ -2,7 +2,7 @@ package space.ryzhenkov.fabric2discord
 
 import com.mojang.brigadier.context.CommandContext
 import com.mojang.brigadier.exceptions.CommandSyntaxException
-import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
+import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback
 import net.minecraft.server.command.CommandManager
 import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.text.Style
@@ -11,7 +11,7 @@ import net.minecraft.text.TextColor
 
 object CommandHandler {
     fun init() {
-        CommandRegistrationCallback.EVENT.register(CommandRegistrationCallback { dispatcher, _, _ ->
+        CommandRegistrationCallback.EVENT.register(CommandRegistrationCallback { dispatcher, _ ->
             dispatcher.register(CommandManager.literal("f2d")
                 .requires { server -> server.hasPermissionLevel(4) }
                 .then(CommandManager.literal("reload")

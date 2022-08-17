@@ -1,6 +1,6 @@
 package space.ryzhenkov.fabric2discord.ktmixins
 
-import net.minecraft.network.message.SignedMessage
+import net.minecraft.server.filter.TextStream.Message
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.text.Text
 import space.ryzhenkov.fabric2discord.KordInstance
@@ -8,11 +8,11 @@ import space.ryzhenkov.fabric2discord.config.ConfigAPI
 import space.ryzhenkov.fabric2discord.utils.MessageUtils
 
 object ServerPlayNetworkHandlerMixin {
-    fun onPlayerMessageEvent(player: ServerPlayerEntity, signedMessage: SignedMessage) {
+    fun onPlayerMessageEvent(player: ServerPlayerEntity, message: Message) {
         if (!ConfigAPI.messages.chatMessage.enabled) return
 
         val replacements = hashMapOf<String, String>()
-        replacements["message"] = signedMessage.content.string
+        replacements["message"] = message.filtered
 
         if (ConfigAPI.general.ids.getWebhookOrNull() != null) {
             KordInstance.executeWebhook(

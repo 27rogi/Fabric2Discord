@@ -1,6 +1,6 @@
 package space.ryzhenkov.fabric2discord.mixins;
 
-import net.minecraft.network.message.SignedMessage;
+import net.minecraft.server.filter.TextStream;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Mixin;
@@ -14,9 +14,9 @@ public abstract class ServerPlayNetworkHandlerMixin {
     @Shadow
     public ServerPlayerEntity player;
 
-    @Inject(method = "handleDecoratedMessage", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/MinecraftServer;getPlayerManager()Lnet/minecraft/server/PlayerManager;"))
-    private void onPlayerMessageEvent(SignedMessage signedMessage, CallbackInfo ci) {
-        space.ryzhenkov.fabric2discord.ktmixins.ServerPlayNetworkHandlerMixin.INSTANCE.onPlayerMessageEvent(player, signedMessage);
+    @Inject(method = "handleMessage", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/PlayerManager;broadcast(Lnet/minecraft/text/Text;Ljava/util/function/Function;Lnet/minecraft/network/MessageType;Ljava/util/UUID;)V"))
+    private void onPlayerMessageEvent(TextStream.Message message, CallbackInfo ci) {
+        space.ryzhenkov.fabric2discord.ktmixins.ServerPlayNetworkHandlerMixin.INSTANCE.onPlayerMessageEvent(player, message);
     }
 
     @Inject(method = "onDisconnected", at = @At("HEAD"))
