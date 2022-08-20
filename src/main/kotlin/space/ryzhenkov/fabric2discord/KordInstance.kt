@@ -6,6 +6,8 @@ import dev.kord.core.event.gateway.ReadyEvent
 import dev.kord.core.event.message.MessageCreateEvent
 import dev.kord.core.exception.KordInitializationException
 import dev.kord.core.on
+import dev.kord.gateway.Intent
+import dev.kord.gateway.PrivilegedIntent
 import eu.pb4.placeholders.api.TextParserUtils
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
@@ -61,7 +63,11 @@ object KordInstance {
                     }
                 }
             }
-            kord.login()
+            kord.login() {
+                intents += Intent.GuildMessages
+                @OptIn(PrivilegedIntent::class)
+                intents += Intent.MessageContent
+            }
         }
     }
 
