@@ -2,6 +2,7 @@ package space.ryzhenkov.fabric2discord
 
 
 import dev.kord.core.behavior.channel.createWebhook
+import dev.kord.core.behavior.edit
 import dev.kord.core.entity.channel.TextChannel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -26,33 +27,45 @@ class F2D : ModInitializer {
 
         KordInstance.launch()
 
-        if (ConfigAPI.general.ids.webhook.toInt() == -1) {
-            logger.warn("Your webhook value is -1, creating new webhook for chat #${ConfigAPI.general.ids.getChatChannelOrNull()}...")
-            if (ConfigAPI.general.ids.getChatChannelOrNull() != null) {
-                runBlocking {
-                    val webhook =
-                        KordInstance.kord.getChannelOf<TextChannel>(ConfigAPI.general.ids.getChatChannelOrNull()!!)!!
-                            .createWebhook(
-                                "Fabric2Discord Webhook"
-                            ) { this.name = "Fabric2Discord" }
-                    ConfigAPI.general.ids.webhook = webhook.id.value.toLong()
+        when (ConfigAPI.general.ids.webhook.toInt()) {
+            -1 -> {
+                logger.warn("Your webhook value is -1, creating new webhook for chat #${ConfigAPI.general.ids.getChatChannelOrNull()}...")
+                if (ConfigAPI.general.ids.getChatChannelOrNull() != null) {
+                    runBlocking {
+                        val webhook =
+                            KordInstance.kord.getChannelOf<TextChannel>(ConfigAPI.general.ids.getChatChannelOrNull()!!)!!
+                                .createWebhook(
+                                    "Fabric2Discord Webhook"
+                                ) { this.name = "Fabric2Discord" }
+                        ConfigAPI.general.ids.webhook = webhook.id.value.toLong()
+
+                        config.save()
+                        config.load()
+                    }
+                } else {
+                    logger.warn("Could not create webhook due to `chatChannel` being disabled. Setting webhook value as 0...")
+                    ConfigAPI.general.ids.webhook = 0
 
                     config.save()
                     config.load()
                 }
-            } else {
-                logger.warn("Could not create webhook due to `chatChannel` being disabled. Setting webhook value as 0...")
-                ConfigAPI.general.ids.webhook = 0
-
-                config.save()
-                config.load()
+            }
+            0 -> {
+                logger.info("Webhook is disabled because its value is 0")
+            }
+            else -> {
+                if (ConfigAPI.general.ids.getChatChannelOrNull() != null) {
+                    runBlocking {
+                        val webhook = KordInstance.kord.getWebhook(ConfigAPI.general.ids.getWebhookOrNull()!!)
+                        if (webhook.channel.id != ConfigAPI.general.ids.getChatChannelOrNull()!!) {
+                            logger.info("Webhook channel doesn't match one specified in config, updating...")
+                            webhook.edit { channelId = ConfigAPI.general.ids.getChatChannelOrNull()!! }
+                        }
+                    }
+                }
+                logger.info("Using webhook with id `${ConfigAPI.general.ids.webhook}`")
             }
         }
-
-        if (ConfigAPI.general.ids.webhook.toInt() == 0)
-            logger.info("Webhook is disabled because its value is 0")
-        else
-            logger.info("Using webhook with id `${ConfigAPI.general.ids.webhook}`")
 
         CommandHandler.init()
         PlaceholderUtils.init()
