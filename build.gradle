@@ -50,10 +50,6 @@ repositories {
 }
 
 dependencies {
-    // yeah... i got really tired finding all of them...
-    // is there another way to bundle D4J with all that stuff? ,_,
-    modImplementation include('dev.kord:kord-core:0.8.0-M15')
-
     //to change the versions see the gradle.properties file
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
     mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
@@ -68,7 +64,8 @@ dependencies {
     modImplementation include("com.gitlab.Lortseam.completeconfig:base:2.0.0")
     modImplementation include("eu.pb4:placeholder-api:2.0.0-beta.7+1.19")
 
-    shadow 'dev.kord:kord-core:0.8.0-M15'
+    // External libraries to bundle with JAR
+    modImplementation include(shadow('dev.kord:kord-core:0.8.0-M16'))
     shadow 'com.vdurmont:emoji-java:5.1.1'
 }
 
