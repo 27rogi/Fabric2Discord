@@ -65,6 +65,10 @@ object KordInstance {
             }
             kord.login() {
                 intents += Intent.GuildMessages
+                intents += Intent.GuildWebhooks
+                intents += Intent.GuildIntegrations
+                @OptIn(PrivilegedIntent::class)
+                intents += Intent.GuildPresences
                 @OptIn(PrivilegedIntent::class)
                 intents += Intent.MessageContent
             }
