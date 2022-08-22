@@ -50,10 +50,6 @@ repositories {
 }
 
 dependencies {
-    // yeah... i got really tired finding all of them...
-    // is there another way to bundle D4J with all that stuff? ,_,
-    modImplementation include('dev.kord:kord-core:0.8.0-M15')
-
     //to change the versions see the gradle.properties file
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
     mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
