@@ -59,7 +59,7 @@ dependencies {
     modImplementation include("eu.pb4:placeholder-api:1.1.3+1.17.1")
 
     // External libraries to bundle with JAR
-    modImplementation include(shadow('dev.kord:kord-core:0.8.0-M16'))
+    modImplementation include(shadow('dev.kord:kord-core:0.8.0-M17'))
     shadow 'com.vdurmont:emoji-java:5.1.1'
 }
 
