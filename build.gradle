@@ -55,8 +55,8 @@ dependencies {
 
     modImplementation include("net.fabricmc:fabric-language-kotlin:${project.fabric_kotlin_version}")
 
-    modImplementation include("com.gitlab.Lortseam.completeconfig:base:2.0.0")
-    modImplementation include("eu.pb4:placeholder-api:2.0.0-beta.7+1.19")
+    modImplementation include("com.github.Lortseam.completeconfig:base:2.2.0")
+    modImplementation include("eu.pb4:placeholder-api:2.0.0-pre.2+1.19.3")
 
     // External libraries to bundle with JAR
     modImplementation include(shadow('dev.kord:kord-core:0.8.0-M17'))
