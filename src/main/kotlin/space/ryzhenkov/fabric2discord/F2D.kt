@@ -35,8 +35,8 @@ class F2D : ModInitializer {
                         val webhook =
                             KordInstance.kord.getChannelOf<TextChannel>(ConfigAPI.general.ids.getChatChannelOrNull()!!)!!
                                 .createWebhook(
-                                    "Fabric2Discord Webhook"
-                                ) { this.name = "Fabric2Discord" }
+                                    "F2D Webhook"
+                                ) { this.name = "F2D" }
                         ConfigAPI.general.ids.webhook = webhook.id.value.toLong()
 
                         config.save()
