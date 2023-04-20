@@ -17,7 +17,7 @@ public abstract class MinecraftServerMixin {
     @Shadow
     private PlayerManager playerManager;
 
-    @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/server/MinecraftServer;setFavicon(Lnet/minecraft/server/ServerMetadata;)V", ordinal = 0), method = "runServer")
+    @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/server/MinecraftServer;createMetadata()Lnet/minecraft/server/ServerMetadata;", ordinal = 0), method = "runServer")
     private void afterSetupServer(CallbackInfo info) {
         space.ryzhenkov.fabric2discord.ktmixins.MinecraftServerMixin.INSTANCE.afterSetupServer(playerManager, timer);
     }
