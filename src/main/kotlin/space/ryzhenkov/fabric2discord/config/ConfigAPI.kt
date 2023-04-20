@@ -191,7 +191,7 @@ object ConfigAPI : ConfigContainer {
             override var enabled: Boolean = true
             override var header: String = "%player:name% has left"
             override var message: String = ""
-            override var footer: String = "*Time played: %player:playtime%*"
+            override var footer: String = "Time played: %player:playtime%"
             override var color: String = "#FF2337"
             override var timestamp: Boolean = false
             override var image: String = ""
@@ -208,6 +208,7 @@ object ConfigAPI : ConfigContainer {
                 Message that will be sent to logs channel when player gets and advancement
                 Custom placeholders: %advancement_name%, %advancement_description%, %advancement_id%
                 Supports PLAYER placeholders
+                To broadcast advancements even when 'announceAdvancements' rule is disabled be sure to enable 'ignoreGamerule'
                 """.trimIndent()
             }
 
@@ -220,6 +221,7 @@ object ConfigAPI : ConfigContainer {
             override var image: String = "https://source.unsplash.com/600x400/?trophy"
             override var iconHeader: String = ""
             override var iconFooter: String = ""
+            var ignoreGamerule: Boolean = true
         }
 
         @Transitive

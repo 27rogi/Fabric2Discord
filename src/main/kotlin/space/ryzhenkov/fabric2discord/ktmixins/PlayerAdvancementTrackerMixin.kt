@@ -6,9 +6,10 @@ import space.ryzhenkov.fabric2discord.config.ConfigAPI
 import space.ryzhenkov.fabric2discord.utils.MessageUtils
 
 object PlayerAdvancementTrackerMixin {
-    fun grantCriterion(owner: ServerPlayerEntity, advancement: Advancement) {
+    fun grantCriterion(owner: ServerPlayerEntity, advancement: Advancement, isGameruleEnabled: Boolean) {
         if (!ConfigAPI.messages.playerAdvancement.enabled) return
         if (ConfigAPI.general.ids.getLogChannelOrNull() == null) return
+        if (!isGameruleEnabled && !ConfigAPI.messages.playerAdvancement.ignoreGamerule) return
 
         val replacements = hashMapOf<String, String>()
         if (advancement.display != null) {
