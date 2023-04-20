@@ -1,5 +1,6 @@
 package space.ryzhenkov.fabric2discord.ktmixins
 
+import dev.kord.common.entity.PresenceStatus
 import kotlinx.coroutines.runBlocking
 import net.minecraft.server.PlayerManager
 import space.ryzhenkov.fabric2discord.F2D
@@ -25,7 +26,22 @@ object MinecraftServerMixin {
             override fun run() {
                 val presence =
                     MessageUtils.format(ConfigAPI.general.status.variants.random(), F2D.minecraftServer).string
-                runBlocking { KordInstance.kord.editPresence { this.playing(presence) } }
+                runBlocking { KordInstance.kord.editPresence {
+                    when (ConfigAPI.general.status.type) {
+                        "IDLE" -> this.status = PresenceStatus.Idle
+                        "DO_NOT_DISTURB" -> this.status = PresenceStatus.DoNotDisturb
+                        "INVISIBLE" -> this.status = PresenceStatus.Invisible
+                        "OFFLINE" -> this.status = PresenceStatus.Offline
+                        else -> this.status = PresenceStatus.Online
+                    }
+                    when (ConfigAPI.general.status.action) {
+                        "LISTENING" -> this.listening(presence)
+                        "COMPETING" -> this.competing(presence)
+                        // TODO: add ability to specify the url in the future
+                        "STREAMING" -> this.streaming(presence, "minecraft.net")
+                        else -> this.playing(presence)
+                    }
+                } }
                 F2D.logger.debug("Presence was updated to \"$presence\"")
             }
         }, TimeUnit.SECONDS.toMillis(1), TimeUnit.MINUTES.toMillis(ConfigAPI.general.status.interval.toLong()))

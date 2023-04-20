@@ -38,6 +38,9 @@ object ConfigAPI : ConfigContainer {
             @ConfigEntry(comment = "Status type, variants: ONLINE, IDLE, DO_NOT_DISTURB, INVISIBLE, OFFLINE")
             var type: String = "DO_NOT_DISTURB"
 
+            @ConfigEntry(comment = "Action type, variants: PLAYING, COMPETING, LISTENING, STREAMING")
+            var action: String = "LISTENING"
+
             @ConfigEntry(comment = "Status update interval in minutes (min = 1, max = 120)")
             @ConfigEntry.BoundedInteger(min = 1, max = 120)
             var interval: Int = 1
