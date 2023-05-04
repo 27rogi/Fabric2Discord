@@ -12,11 +12,10 @@ import java.util.concurrent.TimeUnit
 
 object MinecraftServerMixin {
     fun afterSetupServer(playerManager: PlayerManager, timer: Timer) {
-        if (!ConfigAPI.messages.serverStart.enabled) return
         F2D.minecraftServer = playerManager.server
 
         if (ConfigAPI.general.ids.getChatChannelOrNull() != null) F2D.logger.info("Enabled sync between game chat and Discord!")
-        if (ConfigAPI.general.ids.getLogChannelOrNull() != null) {
+        if (ConfigAPI.messages.serverStart.enabled && ConfigAPI.general.ids.getLogChannelOrNull() != null) {
             MessageUtils.sendEmbedMessage(ConfigAPI.general.ids.getLogChannelOrNull()) {
                 MessageUtils.getEmbedMessage(ConfigAPI.messages.serverStart, F2D.minecraftServer, null)
             }
@@ -48,8 +47,7 @@ object MinecraftServerMixin {
     }
 
     fun afterShutdownServer(timer: Timer) {
-        if (!ConfigAPI.messages.serverStop.enabled) return
-        if (ConfigAPI.general.ids.getLogChannelOrNull() != null) {
+        if (ConfigAPI.messages.serverStop.enabled && ConfigAPI.general.ids.getLogChannelOrNull() != null) {
             MessageUtils.sendEmbedMessage(ConfigAPI.general.ids.getLogChannelOrNull()) {
                 MessageUtils.getEmbedMessage(ConfigAPI.messages.serverStop, F2D.minecraftServer, null)
             }
