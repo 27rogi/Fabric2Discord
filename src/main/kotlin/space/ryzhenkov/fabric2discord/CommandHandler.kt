@@ -8,6 +8,7 @@ import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.text.Style
 import net.minecraft.text.Text
 import net.minecraft.text.TextColor
+import java.util.function.Supplier
 
 object CommandHandler {
     fun init() {
@@ -28,13 +29,13 @@ object CommandHandler {
             F2D.config.load()
         } catch (err: Error) {
             context.source.sendFeedback(
-                Text.of("There is a problem with current config! (${err.message})").copy(),
+                { Text.of("There is a problem with current config! (${err.message})").copy() },
                 false
             )
         }
         context.source.sendFeedback(
-            Text.of("Configuration files reloaded").copy()
-                .setStyle(Style.EMPTY.withColor(TextColor.fromRgb(0x19422814))), false
+            { Text.of("Configuration files reloaded").copy().setStyle(Style.EMPTY.withColor(TextColor.fromRgb(0x19422814))) },
+            false
         )
         return 1
     }

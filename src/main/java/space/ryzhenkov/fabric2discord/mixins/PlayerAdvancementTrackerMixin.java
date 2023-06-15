@@ -18,7 +18,7 @@ public abstract class PlayerAdvancementTrackerMixin {
     @Inject(method = "grantCriterion", at = @At(value = "INVOKE", shift = At.Shift.AFTER, target = "Lnet/minecraft/advancement/AdvancementRewards;apply(Lnet/minecraft/server/network/ServerPlayerEntity;)V"))
     private void grantCriterion(Advancement advancement, String criterionName, CallbackInfoReturnable<Boolean> cir) {
         if (advancement.getDisplay() != null && advancement.getDisplay().shouldAnnounceToChat()) {
-            space.ryzhenkov.fabric2discord.ktmixins.PlayerAdvancementTrackerMixin.INSTANCE.grantCriterion(owner, advancement, this.owner.world.getGameRules().getBoolean(GameRules.ANNOUNCE_ADVANCEMENTS));
+            space.ryzhenkov.fabric2discord.ktmixins.PlayerAdvancementTrackerMixin.INSTANCE.grantCriterion(owner, advancement, this.owner.getServerWorld().getGameRules().getBoolean(GameRules.ANNOUNCE_ADVANCEMENTS));
         }
     }
 }
