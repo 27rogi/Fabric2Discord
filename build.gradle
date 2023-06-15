@@ -5,7 +5,7 @@ plugins {
     id 'com.github.johnrengelman.shadow' version '7.1.2'
 }
 
-version = project.mod_version
+version = "${project.mod_version}+${minecraft_version_group}"
 group = project.maven_group
 
 base {
