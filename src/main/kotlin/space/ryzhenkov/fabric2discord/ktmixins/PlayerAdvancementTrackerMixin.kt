@@ -12,10 +12,11 @@ object PlayerAdvancementTrackerMixin {
         if (!isGameruleEnabled && !ConfigAPI.messages.playerAdvancement.ignoreGamerule) return
 
         val replacements = hashMapOf<String, String>()
-        if (advancement.display != null) {
-            replacements["advancement_name"] = advancement.display!!.title.string
-            replacements["advancement_description"] = advancement.display!!.description.string
-            replacements["advancement_id"] = advancement.id.path.toString()
+        if (advancement.display.isPresent and advancement.parent.isPresent) {
+            val display = advancement.display.get()
+            replacements["advancement_name"] = display.title.string
+            replacements["advancement_description"] = display.description.string
+            replacements["advancement_id"] = advancement.parent.get().path
         }
 
         MessageUtils.sendEmbedMessage(ConfigAPI.general.ids.getLogChannelOrNull()) {
