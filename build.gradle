@@ -68,7 +68,7 @@ dependencies {
 
     // External libraries to bundle with JAR
     modImplementation include(shadow('dev.kord:kord-core:0.9.0'))
-    shadow 'com.vdurmont:emoji-java:5.1.2'
+    shadow 'com.vdurmont:emoji-java:5.1.1'
 }
 
 processResources {
