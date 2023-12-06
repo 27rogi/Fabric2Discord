@@ -1,6 +1,7 @@
 package space.ryzhenkov.fabric2discord.mixins;
 
 import net.minecraft.advancement.Advancement;
+import net.minecraft.advancement.AdvancementEntry;
 import net.minecraft.advancement.PlayerAdvancementTracker;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.world.GameRules;
@@ -16,8 +17,9 @@ public abstract class PlayerAdvancementTrackerMixin {
     private ServerPlayerEntity owner;
 
     @Inject(method = "grantCriterion", at = @At(value = "INVOKE", shift = At.Shift.AFTER, target = "Lnet/minecraft/advancement/AdvancementRewards;apply(Lnet/minecraft/server/network/ServerPlayerEntity;)V"))
-    private void grantCriterion(Advancement advancement, String criterionName, CallbackInfoReturnable<Boolean> cir) {
-        if (advancement.getDisplay() != null && advancement.getDisplay().shouldAnnounceToChat()) {
+    private void grantCriterion(AdvancementEntry advancementEntry, String criterionName, CallbackInfoReturnable<Boolean> cir) {
+        Advancement advancement = advancementEntry.value();
+        if (advancement.display().isPresent() && advancement.display().get().shouldAnnounceToChat()) {
             space.ryzhenkov.fabric2discord.ktmixins.PlayerAdvancementTrackerMixin.INSTANCE.grantCriterion(owner, advancement, this.owner.getServerWorld().getGameRules().getBoolean(GameRules.ANNOUNCE_ADVANCEMENTS));
         }
     }
