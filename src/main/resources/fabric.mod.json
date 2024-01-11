@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "f2d",
+  "version": "${version}",
+  "name": "Fabric2Discord",
+  "description": "Link your Fabric server and Discord with ease!",
+  "authors": [
+    "27rogi"
+  ],
+  "contact": {
+    "homepage": "https://fabricmc.net/",
+    "sources": "https://github.com/FabricMC/fabric-example-mod"
+  },
+  "license": "CC0-1.0",
+  "icon": "assets/f2d/icon.png",
+  "environment": "server",
+  "entrypoints": {
+    "main": [
+      {
+        "adapter": "kotlin",
+        "value": "su.rogi.fabric2discord.Fabric2Discord"
+      }
+    ]
+  },
+  "mixins": [
+    "f2d.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.8.7",
+    "fabric-language-kotlin": ">=1.8.0+kotlin.1.7.0"
+  }
+}

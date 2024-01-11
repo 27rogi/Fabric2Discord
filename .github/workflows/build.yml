@@ -1,0 +1,36 @@
+name: 🏗️ Make Developer Build
+on:
+  pull_request:
+  push:
+    paths:
+      - '**.java'
+      - '**.kt'
+      - '**.properties'
+      - '**.json'
+      - '**.gradle'
+      - '**.gradlew'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📂 Checkout repo
+        uses: actions/checkout@v2
+      - name: 📂 Validate gradle wrapper
+        uses: gradle/wrapper-validation-action@v1
+      - name: 🔽 Install JDK 17
+        uses: actions/setup-java@v1
+        with:
+          java-version: 17
+      - name: 📂 Make gradle wrapper executable
+        run: chmod +x ./gradlew
+      - name: 🏗️ Build with Gradle
+        uses: gradle/gradle-build-action@v2
+        with:
+          gradle-version: current
+          arguments: build --stacktrace
+      - name: ⬆️ Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: dev-build
+          path: build/libs/

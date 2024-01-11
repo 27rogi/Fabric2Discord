@@ -1,0 +1,43 @@
+name: 🍀 Publish Release
+on:
+  release:
+    types: [prereleased, released]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📂 Checkout repo
+        uses: actions/checkout@v2
+      - name: 📂 Validate gradle wrapper
+        uses: gradle/wrapper-validation-action@v1
+      - name: 🔽 Install JDK 17
+        uses: actions/setup-java@v1
+        with:
+          java-version: 17
+      - name: 📂 Make gradle wrapper executable
+        run: chmod +x ./gradlew
+      - name: 🏗️ Build with Gradle
+        uses: gradle/gradle-build-action@v2
+        with:
+          gradle-version: current
+          arguments: build --stacktrace
+      - name: 🍀 Publish
+        uses: Kir-Antipov/mc-publish@v3.1
+        with:
+          modrinth-id: EyyEnN7W
+          modrinth-featured: true
+          modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
+          curseforge-id: 633292
+          curseforge-token: ${{ secrets.CURSE_TOKEN }}
+          files-primary: build/libs/!(*-@(dev|sources|bundle|all)).jar
+          version: ${{ github.ref_name }}
+          version-resolver: releases
+          loaders: |
+            fabric
+            quilt
+          java: |
+            17
+          retry-attempts: 2
+          retry-delay: 10000
+          fail-mode: fail
