@@ -5,6 +5,7 @@ import kotlinx.coroutines.runBlocking
 import net.minecraft.server.PlayerManager
 import su.rogi.fabric2discord.Fabric2Discord
 import su.rogi.fabric2discord.config.Configs
+import su.rogi.fabric2discord.config.components.ChannelCategory
 import su.rogi.fabric2discord.kord.KordClient
 import su.rogi.fabric2discord.utils.MessageUtils
 import java.util.*
@@ -14,12 +15,14 @@ object MinecraftServerMixinKotlin {
     fun afterSetupServer(playerManager: PlayerManager, timer: Timer) {
         Fabric2Discord.minecraftServer = playerManager.server
 
-        if (Configs.SETTINGS.entries.ids.getChatChannel() != null) Fabric2Discord.logger.info("Enabled sync between game chat and Discord!")
-        if (Configs.MESSAGES.entries.server.started.enabled && Configs.SETTINGS.entries.ids.getChatChannel() != null) {
-            MessageUtils.sendEmbedMessage(Configs.SETTINGS.entries.ids.getChatChannel()) {
+        if (Configs.MESSAGES.entries.server.started.enabled) {
+            MessageUtils.sendEmbedMessage(Configs.SETTINGS.entries.ids.getByCategory(ChannelCategory.SERVER_STATUS)) {
                 Configs.MESSAGES.entries.server.started.getEmbed(null, server = Fabric2Discord.minecraftServer)
             }
         }
+
+        Fabric2Discord.logger.info("Enabled sync between game chat and Discord!")
+
         if (!Configs.SETTINGS.entries.status.enabled) return
         timer.schedule(object : TimerTask() {
             override fun run() {
@@ -47,8 +50,8 @@ object MinecraftServerMixinKotlin {
     }
 
     fun afterShutdownServer(timer: Timer) {
-        if (Configs.MESSAGES.entries.server.stopped.enabled && Configs.SETTINGS.entries.ids.getLogChannel() != null) {
-            MessageUtils.sendEmbedMessage(Configs.SETTINGS.entries.ids.getLogChannel()) {
+        if (Configs.MESSAGES.entries.server.stopped.enabled) {
+            MessageUtils.sendEmbedMessage(Configs.SETTINGS.entries.ids.getByCategory(ChannelCategory.SERVER_STATUS)) {
                 Configs.MESSAGES.entries.server.stopped.getEmbed(null, server = Fabric2Discord.minecraftServer)
             }
         }

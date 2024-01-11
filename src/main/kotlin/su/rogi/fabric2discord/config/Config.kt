@@ -15,19 +15,17 @@ open class Config<V>(
     private var loader: HoconConfigurationLoader = HoconConfigurationLoader.builder()
         .path(FabricLoader.getInstance().configDir.resolve(path))
         .defaultOptions { it.header(header) }
-        .build();
-    private var node: CommentedConfigurationNode = loader.load();
+        .build()
+    private var node: CommentedConfigurationNode = loader.load()
     var entries: V = checkNotNull(node[type]) {
         "Unable to get configuration node for $type"
     }
 
     init {
-        println("init")
         save()
     }
 
     fun load(): Config<V> {
-        println("load ${loader.canLoad()}")
         try {
             node = loader.load()
             entries = node[type]!!
@@ -42,7 +40,6 @@ open class Config<V>(
     }
 
     fun save(): Config<V> {
-        println("save")
         try {
             node[type] = entries
             loader.save(node)

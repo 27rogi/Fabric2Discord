@@ -8,7 +8,7 @@ class StatusSettingsGroup {
 
     var type: String = "DO_NOT_DISTURB"
 
-    var action: String = "STREAMING"
+    var action: String = "PLAYING"
 
     var url: String = "minecraft.net"
 

@@ -5,6 +5,7 @@ import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.text.Text
 import su.rogi.fabric2discord.Fabric2Discord
 import su.rogi.fabric2discord.config.Configs
+import su.rogi.fabric2discord.config.components.ChannelCategory
 import su.rogi.fabric2discord.kord.KordClient
 import su.rogi.fabric2discord.utils.MessageUtils
 
@@ -16,7 +17,7 @@ object ServerPlayNetworkHandlerMixinKotlin {
         replacements["message"] = signedMessage.content.string
 
         val embed = Configs.MESSAGES.entries.chat.message.getEmbed(replacements, player)
-        if (Configs.SETTINGS.entries.ids.getWebhook() != null) {
+        if (Configs.SETTINGS.entries.ids.getWebhooks() != null) {
             if (embed.author == null) {
                 Fabric2Discord.logger.warn("Unable to send message via webhook because field [text.header/images.header] of embed (messages.chat.message) is missing!")
                 return
@@ -29,21 +30,18 @@ object ServerPlayNetworkHandlerMixinKotlin {
             return
         }
 
-        if (Configs.SETTINGS.entries.ids.getChatChannel() == null) return
-
-        MessageUtils.sendEmbedMessage(Configs.SETTINGS.entries.ids.getChatChannel()) {
+        MessageUtils.sendEmbedMessage(Configs.SETTINGS.entries.ids.getByCategory(ChannelCategory.GAME_CHAT)) {
             embed
         }
     }
 
     fun remove(player: ServerPlayerEntity, reason: Text) {
         if (!Configs.MESSAGES.entries.player.left.enabled) return
-        if (Configs.SETTINGS.entries.ids.getLogChannel() == null) return
 
         val replacements = hashMapOf<String, String>()
         replacements["leave_reason"] = reason.string
 
-        MessageUtils.sendEmbedMessage(Configs.SETTINGS.entries.ids.getLogChannel()) {
+        MessageUtils.sendEmbedMessage(Configs.SETTINGS.entries.ids.getByCategory(ChannelCategory.CONNECTIONS)) {
             Configs.MESSAGES.entries.player.left.getEmbed(replacements, player)
         }
     }

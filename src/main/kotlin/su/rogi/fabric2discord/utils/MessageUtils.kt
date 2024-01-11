@@ -21,11 +21,13 @@ import su.rogi.fabric2discord.config.Configs
 import su.rogi.fabric2discord.kord.KordClient
 
 object MessageUtils {
-    fun sendEmbedMessage(channel: Snowflake?, embed: () -> EmbedBuilder) {
-        if (channel == null) return
+    fun sendEmbedMessage(channels: List<Snowflake>?, embed: () -> EmbedBuilder) {
+        if (channels.isNullOrEmpty()) return
         Fabric2Discord.scope.launch {
-            KordClient.kord.getChannelOf<TextChannel>(channel)!!.createMessage {
-                embeds = mutableListOf(embed())
+            for (channel in channels) {
+                KordClient.kord.getChannelOf<TextChannel>(channel)!!.createMessage {
+                    embeds = mutableListOf(embed())
+                }
             }
         }
     }

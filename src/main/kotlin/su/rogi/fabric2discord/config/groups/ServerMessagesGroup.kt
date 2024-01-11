@@ -3,7 +3,6 @@ package su.rogi.fabric2discord.config.groups
 import org.spongepowered.configurate.objectmapping.ConfigSerializable
 import su.rogi.fabric2discord.config.components.ImageStructure
 import su.rogi.fabric2discord.config.components.MessageBase
-import su.rogi.fabric2discord.config.components.MessageField
 import su.rogi.fabric2discord.config.components.MessageStructure
 
 @ConfigSerializable
@@ -17,12 +16,6 @@ class ServerMessagesGroup {
         )
         images = ImageStructure(
             image = "https://source.unsplash.com/600x400/?purple,nature",
-        )
-        fields = arrayOf(
-            MessageField().apply {
-                name = "test"
-                value = "my ass"
-            }
         )
         color = "#4ae485"
     }

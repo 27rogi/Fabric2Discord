@@ -2,7 +2,6 @@ package su.rogi.fabric2discord.kord
 
 import dev.kord.core.Kord
 import dev.kord.core.behavior.channel.createWebhook
-import dev.kord.core.behavior.edit
 import dev.kord.core.behavior.execute
 import dev.kord.core.entity.channel.TextChannel
 import dev.kord.core.event.gateway.ReadyEvent
@@ -15,6 +14,7 @@ import eu.pb4.placeholders.api.TextParserUtils
 import kotlinx.coroutines.*
 import su.rogi.fabric2discord.Fabric2Discord
 import su.rogi.fabric2discord.config.Configs
+import su.rogi.fabric2discord.config.components.ChannelCategory
 import su.rogi.fabric2discord.utils.MessageUtils
 import su.rogi.fabric2discord.utils.MessageUtils.createWebhookMessage
 import kotlin.system.exitProcess
@@ -53,7 +53,7 @@ object KordClient {
                     Fabric2Discord.logger.warn("Unable to send chat message because server is not loaded yet!")
                     return@on
                 }
-                if (message.channelId != Configs.SETTINGS.entries.ids.getChatChannel()) return@on
+                if (Configs.SETTINGS.entries.ids.getByCategory(ChannelCategory.SERVER_CHAT)?.contains(message.channelId) != true) return@on
                 if ((message.author == null || message.author!!.isBot) || message.webhookId != null) return@on
                 if (message.content.isNotEmpty()) {
                     MessageUtils.sendMinecraftMessage(Fabric2Discord.minecraftServer!!.playerManager, message.author!!) {
@@ -87,49 +87,51 @@ object KordClient {
     }
 
     fun registerWebhook() {
-        when (Configs.SETTINGS.entries.ids.webhook.toInt()) {
-            0 -> {
-                Fabric2Discord.logger.info("Webhook is disabled by configuration file")
+        if (Configs.SETTINGS.entries.ids.webhooks == null) {
+            Fabric2Discord.logger.info("Webhooks are disabled because entry is null")
+            return
+        }
+        if (Configs.SETTINGS.entries.ids.webhooks!!.isEmpty()) {
+            val chats = Configs.SETTINGS.entries.ids.getByCategory(ChannelCategory.GAME_CHAT)
+            if (chats.isNullOrEmpty()) {
+                Fabric2Discord.logger.info("Unable to create webhooks because there are no channels with `GAME_CHAT` category")
+                return
             }
-            -1 -> {
-                Fabric2Discord.logger.warn("Your webhook value is -1, creating new webhook for chat #${Configs.SETTINGS.entries.ids.getChatChannel()}...")
-                if (Configs.SETTINGS.entries.ids.getChatChannel() != null) {
-                    runBlocking {
-                        val webhook =
-                            kord.getChannelOf<TextChannel>(Configs.SETTINGS.entries.ids.getChatChannel()!!)!!
-                                .createWebhook("F2DHook")
-                        Configs.SETTINGS.entries.ids.webhook = webhook.id.value.toLong()
-                        Configs.SETTINGS.save().load()
+            for (chat in chats) {
+                runBlocking {
+                    val webhook = kord.getChannelOf<TextChannel>(chat)?.createWebhook("F2DHook")
+                    if (webhook == null) {
+                        Fabric2Discord.logger.warn("Invalid channel id for $chat")
+                        return@runBlocking
                     }
-                } else {
-                    Fabric2Discord.logger.warn("Could not create webhook due to `chatChannel` being disabled. Setting webhook value as 0...")
-                    Configs.SETTINGS.entries.ids.webhook = 0
+                    Configs.SETTINGS.entries.ids.webhooks = Configs.SETTINGS.entries.ids.webhooks!!.plus(webhook.id.value.toLong())
                     Configs.SETTINGS.save().load()
                 }
             }
-            else -> {
-                if (Configs.SETTINGS.entries.ids.getChatChannel() != null) {
-                    runBlocking {
-                        val webhook = kord.getWebhook(Configs.SETTINGS.entries.ids.getWebhook()!!)
-                        if (webhook.channel.id != Configs.SETTINGS.entries.ids.getChatChannel()!!) {
-                            Fabric2Discord.logger.info("Webhook channel doesn't match one specified in config, updating...")
-                            webhook.edit { channelId = Configs.SETTINGS.entries.ids.getChatChannel()!! }
-                        }
-                    }
-                }
-                Fabric2Discord.logger.info("Using webhook with id `${Configs.SETTINGS.entries.ids.webhook}`")
-            }
+            return
         }
+
+//        for (webhookId in Configs.SETTINGS.entries.ids.getWebhooks()!!) {
+//            runBlocking {
+//                val webhook = kord.getWebhook(webhookId)
+//                val webhookChannel = Configs.SETTINGS.entries.ids.channels[webhook.channelId.value.toLong()]
+//                if (webhookChannel == null) {
+//
+//                }
+//            }
+//        }
     }
 
     fun executeWebhook(username: String, avatar: String, message: String) {
-        if (Configs.SETTINGS.entries.ids.getWebhook() === null) {
-            Fabric2Discord.logger.warn("Unable to execute webhook because its value is null")
+        if (Configs.SETTINGS.entries.ids.getWebhooks().isNullOrEmpty()) {
+            Fabric2Discord.logger.warn("Unable to execute webhooks because they are empty or null")
             return
         }
         Fabric2Discord.scope.launch {
-            val webhook = kord.getWebhook(Configs.SETTINGS.entries.ids.getWebhook()!!)
-            webhook.execute(webhook.token!!, null) { createWebhookMessage(username, avatar, message) }
+            for (webhookId in Configs.SETTINGS.entries.ids.getWebhooks()!!) {
+                val webhook = kord.getWebhook(webhookId)
+                webhook.execute(webhook.token!!, null) { createWebhookMessage(username, avatar, message) }
+            }
         }
     }
 
