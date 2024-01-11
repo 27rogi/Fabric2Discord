@@ -110,16 +110,6 @@ object KordClient {
             }
             return
         }
-
-//        for (webhookId in Configs.SETTINGS.entries.ids.getWebhooks()!!) {
-//            runBlocking {
-//                val webhook = kord.getWebhook(webhookId)
-//                val webhookChannel = Configs.SETTINGS.entries.ids.channels[webhook.channelId.value.toLong()]
-//                if (webhookChannel == null) {
-//
-//                }
-//            }
-//        }
     }
 
     fun executeWebhook(username: String, avatar: String, message: String) {

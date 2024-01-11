@@ -32,7 +32,7 @@ dependencies {
     modImplementation("net.fabricmc:fabric-loader:${property("loader_version")}")
 
     fapiModules.forEach {
-        modImplementation(fabricApi.module(it, property("fabric_api_version").toString()))
+        modIncludeImplement(fabricApi.module(it, property("fabric_api_version").toString()))
     }
 
     modIncludeImplement("net.fabricmc:fabric-language-kotlin:${property("fabric_kotlin_version")}")
@@ -64,9 +64,10 @@ tasks {
 
         exclude(
             "**/META-INF/**",
-            "**/kotlin/**",
-            "**/kotlinx/**",
-            "DebugProbesKt.bin"
+            "DebugProbesKt.bin",
+            "org/intellij/**",
+            "org/jetbrains/annotations/**",
+            "*.kotlin_module"
         )
         minimize()
     }
@@ -102,7 +103,6 @@ tasks {
     compileKotlin {
         kotlinOptions.jvmTarget = "17"
     }
-
 }
 
 java {
@@ -111,7 +111,5 @@ java {
     // If you remove this line, sources will not be generated.
     withSourcesJar()
 }
-
-
 
 // configure the maven publication
