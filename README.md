@@ -8,6 +8,15 @@
 # 🍀 Version 3.0.0
 Project has been fully rewritten and major parts are changed which results in broken compatability for older configs. Wiki articles may have old information about configuration, this will be fixed soon.
 
+# ✨ Features
+- [x] Based on **Kotlin** and **kord**
+- [x] Ability to choose messages per channel
+- [x] Ability to change bot status
+- [x] Customizable messages
+- [x] [Supports advanced formatting](https://github.com/Patbox/TextPlaceholderAPI)
+- [x] Embed support
+- [x] Webhook support
+
 # 📖 Getting Started
 I wrote few helpful articles about this mod, so if you need help you can visit [wiki](https://github.com/rogi27/Fabric2Discord/wiki#-getting-started=).
 
