@@ -23,7 +23,7 @@ jobs:
           gradle-version: current
           arguments: build --stacktrace
       - name: 🍀 Publish
-        uses: Kir-Antipov/mc-publish@v3.1
+        uses: Kir-Antipov/mc-publish@v3
         with:
           modrinth-id: EyyEnN7W
           modrinth-featured: true
