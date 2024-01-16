@@ -26,11 +26,10 @@ object Commands {
         Configs.SETTINGS.load()
         Configs.MESSAGES.load()
         context.source.sendFeedback(
-            { Text
+            Text
                 .of("Configuration files reloaded")
                 .copy()
-                .setStyle(Style.EMPTY.withColor(TextColor.fromRgb(0x19422814)))
-            },
+                .setStyle(Style.EMPTY.withColor(TextColor.fromRgb(0x19422814))),
             false
         )
         return 1

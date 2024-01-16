@@ -36,7 +36,7 @@ dependencies {
     }
 
     modIncludeImplement("net.fabricmc:fabric-language-kotlin:${property("fabric_kotlin_version")}")
-    modIncludeImplement("eu.pb4:placeholder-api:2.3.0+1.20.3")
+    modIncludeImplement("eu.pb4:placeholder-api:2.1.0+1.19.4")
 
     // Shadow and include some extra dependencies
     modIncludeImplement("org.spongepowered:configurate-extra-kotlin:4.1.2")
