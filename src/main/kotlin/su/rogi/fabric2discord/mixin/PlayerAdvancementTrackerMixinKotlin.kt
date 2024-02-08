@@ -19,8 +19,11 @@ object PlayerAdvancementTrackerMixinKotlin {
             replacements["advancement_id"] = advancement.parent.get().path
         }
 
-        MessageUtils.sendEmbedMessage(Configs.SETTINGS.entries.ids.getByCategory(ChannelCategory.ADVANCEMENTS)) {
-            Configs.MESSAGES.entries.player.gotAdvancement.getEmbed(replacements, owner)
+        MessageUtils.sendDiscordMessage(Configs.SETTINGS.entries.ids.getByCategory(ChannelCategory.ADVANCEMENTS)) {
+            Configs.MESSAGES.entries.player.gotAdvancement.let {
+                suppressNotifications = it.silent
+                embeds = mutableListOf(it.getEmbed(replacements, owner))
+            }
         }
     }
 }

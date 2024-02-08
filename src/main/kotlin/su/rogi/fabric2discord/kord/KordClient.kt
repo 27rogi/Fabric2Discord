@@ -55,13 +55,14 @@ object KordClient {
                 }
                 if (Configs.SETTINGS.entries.ids.getByCategory(ChannelCategory.SERVER_CHAT)?.contains(message.channelId) != true) return@on
                 if ((message.author == null || message.author!!.isBot) || message.webhookId != null) return@on
+                if (this.guildId == null) return@on Fabric2Discord.logger.error("Unable to get guildId for incoming message!")
                 if (message.content.isNotEmpty()) {
-                    MessageUtils.sendMinecraftMessage(Fabric2Discord.minecraftServer!!.playerManager, message.author!!) {
+                    MessageUtils.sendMinecraftMessage(Fabric2Discord.minecraftServer!!.playerManager, message.author!!.asMember(this.guildId!!)) {
                         TextParserUtils.formatTextSafe(MessageUtils.convertDiscordTags(message.content))
                     }
                 }
                 if (message.attachments.isNotEmpty()) {
-                    MessageUtils.sendMinecraftMessage(Fabric2Discord.minecraftServer!!.playerManager, message.author!!) {
+                    MessageUtils.sendMinecraftMessage(Fabric2Discord.minecraftServer!!.playerManager, message.author!!.asMember(this.guildId!!)) {
                         TextParserUtils.formatText(message.attachments.joinToString { attachment ->
                             Configs.MESSAGES.entries.chat.formattedAttachment.replace("%attachment_url%", attachment.url).replace(
                                 "%attachment_name%",

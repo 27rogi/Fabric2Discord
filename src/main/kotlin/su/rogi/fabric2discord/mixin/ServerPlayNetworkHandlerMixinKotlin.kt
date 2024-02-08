@@ -13,10 +13,7 @@ object ServerPlayNetworkHandlerMixinKotlin {
     fun onPlayerMessageEvent(player: ServerPlayerEntity, signedMessage: SignedMessage) {
         if (!Configs.MESSAGES.entries.chat.message.enabled) return
 
-        val replacements = hashMapOf<String, String>()
-        replacements["message"] = signedMessage.content.string
-
-        val embed = Configs.MESSAGES.entries.chat.message.getEmbed(replacements, player)
+        val embed = Configs.MESSAGES.entries.chat.message.getEmbed(hashMapOf(Pair("message", signedMessage.content.string)), player)
         if (Configs.SETTINGS.entries.ids.getWebhooks() != null) {
             if (embed.author == null) {
                 Fabric2Discord.logger.warn("Unable to send message via webhook because field [text.header/images.header] of embed (messages.chat.message) is missing!")
@@ -30,19 +27,19 @@ object ServerPlayNetworkHandlerMixinKotlin {
             return
         }
 
-        MessageUtils.sendEmbedMessage(Configs.SETTINGS.entries.ids.getByCategory(ChannelCategory.GAME_CHAT)) {
-            embed
+        MessageUtils.sendDiscordMessage(Configs.SETTINGS.entries.ids.getByCategory(ChannelCategory.GAME_CHAT)) {
+            embeds = mutableListOf(embed)
         }
     }
 
     fun remove(player: ServerPlayerEntity, reason: Text) {
         if (!Configs.MESSAGES.entries.player.left.enabled) return
 
-        val replacements = hashMapOf<String, String>()
-        replacements["leave_reason"] = reason.string
-
-        MessageUtils.sendEmbedMessage(Configs.SETTINGS.entries.ids.getByCategory(ChannelCategory.CONNECTIONS)) {
-            Configs.MESSAGES.entries.player.left.getEmbed(replacements, player)
+        MessageUtils.sendDiscordMessage(Configs.SETTINGS.entries.ids.getByCategory(ChannelCategory.CONNECTIONS)) {
+            Configs.MESSAGES.entries.player.left.let {
+                suppressNotifications = it.silent
+                embeds = mutableListOf(it.getEmbed(hashMapOf(Pair("leave_reason", reason.string)), player))
+            }
         }
     }
 }

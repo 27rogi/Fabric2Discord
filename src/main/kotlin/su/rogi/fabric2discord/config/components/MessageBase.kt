@@ -11,6 +11,7 @@ import su.rogi.fabric2discord.utils.MessageUtils.format
 @ConfigSerializable
 open class MessageBase {
     open var enabled: Boolean = true
+    open var silent: Boolean = false
     open var timestamp: Boolean = false
     open var fields: Array<MessageField> = arrayOf()
 

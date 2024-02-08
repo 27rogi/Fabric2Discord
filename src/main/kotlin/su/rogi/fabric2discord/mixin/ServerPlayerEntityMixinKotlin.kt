@@ -16,8 +16,11 @@ object ServerPlayerEntityMixinKotlin {
         replacements["death_message"] = tracker.deathMessage.string
         replacements["death_by"] = source.name
 
-        MessageUtils.sendEmbedMessage(Configs.SETTINGS.entries.ids.getByCategory(ChannelCategory.DEATHS)) {
-            Configs.MESSAGES.entries.player.died.getEmbed(replacements, player)
+        MessageUtils.sendDiscordMessage(Configs.SETTINGS.entries.ids.getByCategory(ChannelCategory.DEATHS)) {
+            Configs.MESSAGES.entries.player.died.let {
+                suppressNotifications = it.silent
+                embeds = mutableListOf(it.getEmbed(replacements, player))
+            }
         }
     }
 
@@ -28,8 +31,11 @@ object ServerPlayerEntityMixinKotlin {
         replacements["world_origin"] = origin.registryKey.value.toString()
         replacements["world_origin_id"] = origin.registryKey.value.path
 
-        MessageUtils.sendEmbedMessage(Configs.SETTINGS.entries.ids.getByCategory(ChannelCategory.TELEPORTS)) {
-            Configs.MESSAGES.entries.player.teleported.getEmbed(replacements, player)
+        MessageUtils.sendDiscordMessage(Configs.SETTINGS.entries.ids.getByCategory(ChannelCategory.TELEPORTS)) {
+            Configs.MESSAGES.entries.player.teleported.let {
+                suppressNotifications = it.silent
+                embeds = mutableListOf(it.getEmbed(replacements, player))
+            }
         }
     }
 }

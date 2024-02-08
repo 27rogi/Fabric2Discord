@@ -4,9 +4,9 @@ import com.vdurmont.emoji.EmojiParser
 import dev.kord.common.Color
 import dev.kord.common.entity.Snowflake
 import dev.kord.core.behavior.channel.createMessage
-import dev.kord.core.entity.User
+import dev.kord.core.entity.Member
 import dev.kord.core.entity.channel.TextChannel
-import dev.kord.rest.builder.message.EmbedBuilder
+import dev.kord.rest.builder.message.create.UserMessageCreateBuilder
 import dev.kord.rest.builder.message.create.WebhookMessageCreateBuilder
 import eu.pb4.placeholders.api.PlaceholderContext
 import eu.pb4.placeholders.api.Placeholders.parseText
@@ -21,21 +21,27 @@ import su.rogi.fabric2discord.config.Configs
 import su.rogi.fabric2discord.kord.KordClient
 
 object MessageUtils {
-    fun sendEmbedMessage(channels: List<Snowflake>?, embed: () -> EmbedBuilder) {
+    fun sendDiscordMessage(channels: List<Snowflake>?, builder: UserMessageCreateBuilder.() -> Unit) {
         if (channels.isNullOrEmpty()) return
         Fabric2Discord.scope.launch {
             for (channel in channels) {
                 KordClient.kord.getChannelOf<TextChannel>(channel)!!.createMessage {
-                    embeds = mutableListOf(embed())
+                    builder()
                 }
             }
         }
     }
 
-    fun sendMinecraftMessage(playerManager: PlayerManager, user: User, message: () -> Text) {
+    fun sendMinecraftMessage(playerManager: PlayerManager, member: Member, message: () -> Text) {
+        val replacements = hashMapOf(
+            Pair("discord_username", member.username),
+            Pair("discord_nickname", member.effectiveName),
+            // TODO: implement colorful names for chat depending on role or profile customization
+            // Pair("discord_color", member.accentColor)
+        )
         val formattedMessage = checkNotNull(format(
-            Configs.MESSAGES.entries.chat.format
-                .replace("%discord_user%", user.username),
+            Configs.MESSAGES.entries.chat.format,
+            tags = replacements,
             server = playerManager.server
         )).copy().append(message.invoke())
 
