@@ -22,6 +22,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           java-version: 17
+          distribution: 'zulu'
       - name: 📂 Make gradle wrapper executable
         run: chmod +x ./gradlew
       - name: 🏗️ Build with Gradle
