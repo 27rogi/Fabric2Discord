@@ -30,7 +30,7 @@ jobs:
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
           curseforge-id: 633292
           curseforge-token: ${{ secrets.CURSE_TOKEN }}
-          files-primary: build/libs/!(*-@(dev|sources|bundle|all)).jar
+          files: build/libs/!(*-@(dev|sources|bundle|all)).jar
           version: ${{ github.ref_name }}
           version-resolver: releases
           loaders: |
