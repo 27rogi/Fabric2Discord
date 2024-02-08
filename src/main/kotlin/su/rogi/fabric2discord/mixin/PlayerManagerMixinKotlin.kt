@@ -8,8 +8,11 @@ import su.rogi.fabric2discord.utils.MessageUtils
 object PlayerManagerMixinKotlin {
     fun onPlayerConnect(player: ServerPlayerEntity) {
         if (!Configs.MESSAGES.entries.player.joined.enabled) return
-        MessageUtils.sendEmbedMessage(Configs.SETTINGS.entries.ids.getByCategory(ChannelCategory.CONNECTIONS)) {
-            Configs.MESSAGES.entries.player.joined.getEmbed(player = player)
+        MessageUtils.sendDiscordMessage(Configs.SETTINGS.entries.ids.getByCategory(ChannelCategory.CONNECTIONS)) {
+            Configs.MESSAGES.entries.player.joined.let {
+                suppressNotifications = it.silent
+                embeds = mutableListOf(it.getEmbed(player = player))
+            }
         }
     }
 }

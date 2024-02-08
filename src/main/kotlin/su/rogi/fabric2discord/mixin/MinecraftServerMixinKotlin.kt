@@ -16,8 +16,11 @@ object MinecraftServerMixinKotlin {
         Fabric2Discord.minecraftServer = playerManager.server
 
         if (Configs.MESSAGES.entries.server.started.enabled) {
-            MessageUtils.sendEmbedMessage(Configs.SETTINGS.entries.ids.getByCategory(ChannelCategory.SERVER_STATUS)) {
-                Configs.MESSAGES.entries.server.started.getEmbed(null, server = Fabric2Discord.minecraftServer)
+            MessageUtils.sendDiscordMessage(Configs.SETTINGS.entries.ids.getByCategory(ChannelCategory.SERVER_STATUS)) {
+                Configs.MESSAGES.entries.server.started.let {
+                    suppressNotifications = it.silent
+                    embeds = mutableListOf(it.getEmbed(null, server = Fabric2Discord.minecraftServer))
+                }
             }
         }
 
@@ -50,9 +53,10 @@ object MinecraftServerMixinKotlin {
     }
 
     fun afterShutdownServer(timer: Timer) {
-        if (Configs.MESSAGES.entries.server.stopped.enabled) {
-            MessageUtils.sendEmbedMessage(Configs.SETTINGS.entries.ids.getByCategory(ChannelCategory.SERVER_STATUS)) {
-                Configs.MESSAGES.entries.server.stopped.getEmbed(null, server = Fabric2Discord.minecraftServer)
+        MessageUtils.sendDiscordMessage(Configs.SETTINGS.entries.ids.getByCategory(ChannelCategory.SERVER_STATUS)) {
+            Configs.MESSAGES.entries.server.stopped.let {
+                suppressNotifications = it.silent
+                embeds = mutableListOf(it.getEmbed(null, server = Fabric2Discord.minecraftServer))
             }
         }
         if (Configs.SETTINGS.entries.status.enabled) timer.cancel()
